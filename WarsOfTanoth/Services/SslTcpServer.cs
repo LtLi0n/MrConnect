@@ -42,7 +42,7 @@ namespace WarsOfTanoth.Services
             store.Open(OpenFlags.ReadOnly);
             X509Certificate2Collection coll = store.Certificates.Find(X509FindType.FindBySubjectName, config["server:cert_sn"], true);
             byte[] cert_data = coll.Export(X509ContentType.Pkcs12, config["server:cert_pwd"]);*/
-            ServerCertificate = new X509Certificate2(config["server:cert_file"], config["server:cert_pwd"]);
+            ServerCertificate = new X509Certificate2(@"data\" + config["server:cert_file"], config["server:cert_pwd"]);
             _logger.LogLine(this, "Certificate loaded.");
 
             //local ip
