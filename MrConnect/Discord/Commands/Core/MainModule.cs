@@ -60,7 +60,7 @@ namespace MrConnect.Discord
                 {
                     Name = Context.Client.CurrentUser.Username,
                     IconUrl = Context.Client.CurrentUser.GetAvatarUrl(),
-                    Url = "https://github.com/LtLi0n/LionLibrary"
+                    Url = "https://github.com/LtLi0n/MrConnect"
                 },
 
                 Description =
