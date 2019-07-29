@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using LionLibrary.SQL;
 using System.Text;
+using DiscordSQL;
 
 namespace WarsOfTanothShared.SQL
 {
