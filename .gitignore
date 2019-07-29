@@ -6,5 +6,11 @@
 /WarsOfTanoth/obj
 /WarsOfTanoth/data
 
+/WarsOfTanothShared/bins
+/WarsOfTanothShared/obj
+
+/DiscordSQL/bin
+/DiscordSQL/obj
+
 /cmd
 /.vs
