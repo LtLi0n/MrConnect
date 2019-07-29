@@ -36,7 +36,7 @@ namespace MrConnect.Discord
             EmbedBuilder eb = new EmbedBuilder();
 
             EmbedFieldBuilder wot_field = new EmbedFieldBuilder();
-            wot_field.Name = $"⚔️ {Config["servers:wot:title"]} ⚔️";
+            wot_field.Name = $"⚔️ Wars of Tanoth ⚔️";
             wot_field.Value = $"{SharedEmoji.ProcessingGif} Pinging...";
 
             eb.Fields.Add(wot_field);
