@@ -8,7 +8,7 @@ namespace MrConnect.Services
 {
     public class WoTService : ServerCommunicator, IWoTService
     {
-        public WoTService(IServiceProvider services, IAppConfig config) : base(services, config, null)
+        public WoTService(IServiceProvider services, IAppConfig config, ILogService logger) : base(services, config, logger)
         {
         }
     }

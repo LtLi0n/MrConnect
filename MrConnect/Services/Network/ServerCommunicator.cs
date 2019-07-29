@@ -60,7 +60,7 @@ namespace MrConnect.Services
             }
             catch (Exception ex)
             {
-                Logger.LogLine(this, ex.Message, LogSeverity.Error);
+                Logger?.LogLine(this, ex.Message, LogSeverity.Error);
                 return -2;
             }
         }
