@@ -5,13 +5,13 @@ VisualStudioVersion = 16.0.29111.141
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MrConnect", "MrConnect\MrConnect.csproj", "{AEA061E1-77A0-4EA5-8F1A-E61C3CC1F30A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LionLibrary", "LionLibrary\LionLibrary\LionLibrary.csproj", "{FCECB939-9ADA-4E56-BA8C-7225FBD14AC1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WarsOfTanoth", "WarsOfTanoth\WarsOfTanoth.csproj", "{455BD074-705B-43D1-81E8-788402B23D07}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WarsOfTanothShared", "WarsOfTanothShared\WarsOfTanothShared.csproj", "{F19453A1-B6D2-4F93-B4DC-5AE556AA5D83}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordSQL", "DiscordSQL\DiscordSQL.csproj", "{92115141-39AE-497C-83F3-CBD0DA74D3FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LionLibrary", "LionLibrary\LionLibrary\LionLibrary.csproj", "{6D86326E-5279-4E07-9171-E741B5863024}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,6 @@ Global
 		{AEA061E1-77A0-4EA5-8F1A-E61C3CC1F30A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEA061E1-77A0-4EA5-8F1A-E61C3CC1F30A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEA061E1-77A0-4EA5-8F1A-E61C3CC1F30A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FCECB939-9ADA-4E56-BA8C-7225FBD14AC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FCECB939-9ADA-4E56-BA8C-7225FBD14AC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FCECB939-9ADA-4E56-BA8C-7225FBD14AC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FCECB939-9ADA-4E56-BA8C-7225FBD14AC1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{455BD074-705B-43D1-81E8-788402B23D07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{455BD074-705B-43D1-81E8-788402B23D07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{455BD074-705B-43D1-81E8-788402B23D07}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{92115141-39AE-497C-83F3-CBD0DA74D3FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92115141-39AE-497C-83F3-CBD0DA74D3FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92115141-39AE-497C-83F3-CBD0DA74D3FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D86326E-5279-4E07-9171-E741B5863024}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D86326E-5279-4E07-9171-E741B5863024}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D86326E-5279-4E07-9171-E741B5863024}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D86326E-5279-4E07-9171-E741B5863024}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
