@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using MrConnect.Services;
+using Discord.WebSocket;
+using System.Linq;
 
 namespace MrConnect.Discord
 {
@@ -14,7 +16,9 @@ namespace MrConnect.Discord
     public class MainModule : ModuleBase<SocketCommandContext>
     {
         public IAppConfig Config { get; set; }
-        public IWoTService WoT { get; set; }
+
+        public ConnectorWoT WoT { get; set; }
+        public ConnectorDiscord Discord { get; set; }
 
         [Command("ping")]
         public async Task Ping()
@@ -33,22 +37,43 @@ namespace MrConnect.Discord
         [Command("status", RunMode = RunMode.Async)]
         public async Task Status()
         {
+            RestUserMessage msg = null;
             EmbedBuilder eb = new EmbedBuilder();
 
-            EmbedFieldBuilder wot_field = new EmbedFieldBuilder();
-            wot_field.Name = $"⚔️ Wars of Tanoth ⚔️";
-            wot_field.Value = $"{SharedEmoji.ProcessingGif} Pinging...";
-
-            eb.Fields.Add(wot_field);
-            RestUserMessage msg = (RestUserMessage)await ReplyAsync(embed: eb.Build());
-            int state = await WoT.Ping();
-
-            ReflectServerResponse(eb.Fields[0], state);
-
-            await msg.ModifyAsync(x =>
+            eb.Fields = new List<EmbedFieldBuilder>()
             {
-                x.Embed = eb.Build();
-            });
+                new EmbedFieldBuilder
+                {
+                    Name = $"🔷 Discord Service 🔷",
+                    Value = $"{SharedEmoji.ProcessingGif} Pinging...\n\u200b"
+                },
+                new EmbedFieldBuilder
+                {
+                    Name = $"⚔️ WoT Service ⚔️",
+                    Value = $"{SharedEmoji.ProcessingGif} Pinging..."
+                }
+            };
+
+            //Discord Service ping
+            {
+                msg = (RestUserMessage)await ReplyAsync(embed: eb.Build());
+
+                await PingAndModifyField(Discord, eb.Fields[0]);
+                eb.Fields[0].Value += "\n\u200b";
+                await msg.ModifyAsync(x => x.Embed = eb.Build());
+            }
+
+            //WoT Service ping
+            {
+                await PingAndModifyField(WoT, eb.Fields[1]);
+                await msg.ModifyAsync(x => x.Embed = eb.Build());
+            }
+        }
+
+        private async Task PingAndModifyField(IServerConnector connector, EmbedFieldBuilder field)
+        {
+            int state = await connector.Ping();
+            ReflectServerResponse(field, state);
         }
 
         [Command("info")]

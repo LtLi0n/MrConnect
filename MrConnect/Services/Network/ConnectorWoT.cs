@@ -6,9 +6,9 @@ using System.Text;
 
 namespace MrConnect.Services
 {
-    public class WoTService : ServerCommunicator, IWoTService
+    public class ConnectorWoT : ServerConnector
     {
-        public WoTService(IServiceProvider services, IAppConfig config, ILogService logger) : base(services, config, logger)
+        public ConnectorWoT(IServiceProvider services, IAppConfig config, ILogService logger) : base(services, config, null, "wot")
         {
         }
     }

@@ -21,8 +21,7 @@ namespace SharedWoT.SQL
         public string CodeName { get; set; }
 
         [Column("emoji_id")]
-        public uint EmojiId { get; }
-        public Emoji Emoji { get; set; }
+        public uint EmoteId { get; }
 
         [Column("description", TypeName = "varchar(255)")]
         public string Description { get; set; }

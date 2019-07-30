@@ -8,12 +8,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
-using ServerWoT.Boot;
+using ServerDiscord.Boot;
+using SharedDiscord;
 
-namespace ServerWoT.Services
+namespace ServerDiscord.Services
 {
     public class DataContext : DbContext, IDataContext
     {
+        public DbSet<User> Users { get; set; }
+
         private readonly ILogService _logger;
         private readonly IAppConfig _config;
 

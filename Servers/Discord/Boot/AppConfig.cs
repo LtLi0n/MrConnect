@@ -1,14 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace MrConnect.Boot
+namespace ServerDiscord.Boot
 {
     public class AppConfig : IAppConfig
     {
         public const string PATH_CONFIG = "data/config.json";
 
         public IConfigurationRoot ConfigRoot { get; }
-
-        public ulong OwnerId => GetValue<ulong>("discord:ownerId");
 
         public AppConfig()
         {

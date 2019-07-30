@@ -5,7 +5,7 @@ using MrConnect.Boot;
 
 namespace MrConnect.Services
 {
-    public interface IServerCommunicator
+    public interface IServerConnector
     {
         LionClient Client { get; }
         IAppConfig Config { get; }

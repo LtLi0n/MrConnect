@@ -7,23 +7,22 @@ using LionLibrary.SQL;
 
 namespace SharedDiscord
 {
-    [Table("emoji")]
-    public class Emoji : IEntity<Emoji, string>
+    [Table("guild_emote")]
+    public class GuildEmote : IEntity<GuildEmote, string>
     {
-        [Key] [Column("id")]
+        [Key]
         public string Id { get; set; }
 
-        [Required] [Column("name")]
-        public string Name { get; set; }
+        [Required]
+        public string GuildId { get; set; }
 
-        [Column("user?")]
         public string UserId { get; set; }
         public User User { get; set; }
 
-        [Column("require_colons?")]
-        public bool RequiresColons { get; set; } = false;
+        [Required]
+        public string Name { get; set; }
 
-        [Column("managed?")]
+        public bool RequireColons { get; set; } = false;
         public bool IsManaged { get; set; } = false;
 
         [Column("animated?")]

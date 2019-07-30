@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LionLibrary\LionLibrary\LionLibrary.csproj" />
+    <ProjectReference Include="..\Shared\Discord\SharedDiscord.csproj" />
   </ItemGroup>
 
   <ItemGroup>

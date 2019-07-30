@@ -8,23 +8,23 @@ using System.Threading.Tasks;
 
 namespace MrConnect.Services
 {
-    public abstract class ServerCommunicator : IServerCommunicator
+    public abstract class ServerConnector : IServerConnector
     {
         private readonly IServiceProvider _services;
         public LionClient Client { get; }
         public ILogService Logger { get; }
         public IAppConfig Config { get; }
 
-        public ServerCommunicator(IServiceProvider services, IAppConfig config, ILogService logger)
+        public ServerConnector(IServiceProvider services, IAppConfig config, ILogService logger, string server_name)
         {
             _services = services;
             Config = config;
             Logger = logger;
 
             Client = new LionClient(
-                config["servers:wot:host"],
-                config.GetValue<int>("servers:wot:port"),
-                config["servers:cert_name"],
+                config[$"servers:{server_name}:host"],
+                config.GetValue<int>($"servers:{server_name}:port"),
+                config[$"servers:{server_name}:cert_name"],
                 logger);
         }
 

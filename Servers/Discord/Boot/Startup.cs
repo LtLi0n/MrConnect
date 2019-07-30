@@ -1,22 +1,20 @@
-﻿using Discord.Commands;
-using Discord.WebSocket;
+﻿using LionLibrary.Commands;
 using LionLibrary.Framework;
 using LionLibrary.Utils;
 using Microsoft.Extensions.DependencyInjection;
-using MrConnect.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using ServerDiscord.Services;
 
-namespace MrConnect.Boot
+namespace ServerDiscord.Boot
 {
     public class Startup
     {
         public ReadOnlyCollection<string> Args { get; }
-
         private readonly IServiceProvider _services;
 
         public Startup(string[] args)
@@ -31,9 +29,8 @@ namespace MrConnect.Boot
             ServiceCollection sc = new ServiceCollection();
             ContainerConfig.RegisterTypes(sc);
             sc.AddSingleton<IAppConfig, AppConfig>();
-            sc.AddSingleton<IDiscordService, DiscordService>();
-            sc.AddSingleton<ConnectorDiscord>();
-            sc.AddSingleton<ConnectorWoT>();
+            sc.AddSingleton<ISslTcpServer, SslTcpServer>();
+            sc.AddTransient<IDataContext, DataContext>();
 
             return sc.BuildServiceProvider();
         }
@@ -44,12 +41,17 @@ namespace MrConnect.Boot
             logger.Start();
             logger.CursorVisible = false;
 
-            IDiscordService discord = _services.GetService<IDiscordService>();
-            await discord.InstallCommandsAsync();
-            await discord.StartAsync();
+            await _services.GetService<ICommandService>().InstallCommandsAsync(Assembly.GetExecutingAssembly(), _services);
+            _services.GetService<ISslTcpServer>().Start(_services);
 
-            await _services.GetService<ConnectorDiscord>().StartAsync();
-            await _services.GetService<ConnectorWoT>().StartAsync();
+            while (true)
+            {
+                var key = Console.ReadKey();
+                if (key.Key == ConsoleKey.Q)
+                {
+                    Environment.Exit(0);
+                }
+            }
 
             await Task.Delay(-1);
         }
