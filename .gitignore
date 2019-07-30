@@ -2,15 +2,19 @@
 /MrConnect/obj
 /MrConnect/data
 
-/WarsOfTanoth/bin
-/WarsOfTanoth/obj
-/WarsOfTanoth/data
+/Servers/Discord/bin
+/Servers/Discord/obj
+/Servers/Discord/data
 
-/WarsOfTanothShared/bins
-/WarsOfTanothShared/obj
+/Servers/WoT/bin
+/Servers/WoT/obj
+/Servers/WoT/data
 
-/DiscordSQL/bin
-/DiscordSQL/obj
+/Shared/Discord/bin
+/Shared/Discord/obj
+
+/Shared/WoT/bin
+/Shared/WoT/obj
 
 /cmd
 /.vs
