@@ -6,7 +6,7 @@ namespace MrConnect.Services
 {
     public class ConnectorDiscord : ServerConnector
     {
-        public ConnectorDiscord(IServiceProvider services, IAppConfig config, ILogService logger) : base(services, config, null, "discord")
+        public ConnectorDiscord(IServiceProvider services, IAppConfig config, ILogService logger) : base(services, config, logger, "discord")
         {
         }
     }

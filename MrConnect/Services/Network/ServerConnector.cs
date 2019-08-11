@@ -24,7 +24,7 @@ namespace MrConnect.Services
             Client = new LionClient(
                 config[$"servers:{server_name}:host"],
                 config.GetValue<int>($"servers:{server_name}:port"),
-                config[$"servers:{server_name}:cert_name"],
+                config[$"servers:{server_name}:cert_sn"],
                 logger);
         }
 
