@@ -11,13 +11,9 @@ namespace ServerDiscord.Design
     {
         public DataContext CreateDbContext(string[] args)
         {
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile(AppConfig.PATH_CONFIG)
-                .Build();
-
+            AppConfig config = new AppConfig();
             var builder = new DbContextOptionsBuilder<DataContext>();
-            DataContext.SyncMysqlOptions(builder, configuration);
+            DataContext.SyncMysqlOptions(builder, config);
             return new DataContext(builder.Options);
         }
     }

@@ -9,6 +9,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using ServerDiscord.Services;
+using LionLibrary.Network;
+using DataServerHelpers;
 
 namespace ServerDiscord.Boot
 {
@@ -28,9 +30,15 @@ namespace ServerDiscord.Boot
         {
             ServiceCollection sc = new ServiceCollection();
             ContainerConfig.RegisterTypes(sc);
-            sc.AddSingleton<IAppConfig, AppConfig>();
-            sc.AddSingleton<ISslTcpServer, SslTcpServer>();
-            sc.AddTransient<IDataContext, DataContext>();
+            AppConfig config = new AppConfig();
+            {
+                sc.AddSingleton<IConnectionStringConfig>(config);
+                sc.AddSingleton<IDataModuleConfig>(config);
+                sc.AddSingleton<IServerConfig>(config);
+                sc.AddSingleton<ISslServerConfig>(config);
+            }
+            sc.AddSingleton<LionServer<SocketUser, CustomCommandContext>>();
+            sc.AddTransient<DataContext>();
 
             return sc.BuildServiceProvider();
         }
@@ -38,11 +46,14 @@ namespace ServerDiscord.Boot
         public async Task StartAsync()
         {
             ILogService logger = _services.GetService<ILogService>();
-            logger.Start();
+            logger.LogLevel = LogSeverity.Debug;
             logger.CursorVisible = false;
+            logger.Start();
 
             await _services.GetService<ICommandService>().InstallCommandsAsync(Assembly.GetExecutingAssembly(), _services);
-            _services.GetService<ISslTcpServer>().Start(_services);
+            var server = _services.GetService<LionServer<SocketUser, CustomCommandContext>>();
+            server.Init(x => new SocketUser(x), (cService, sockUser, packet) => new CustomCommandContext(cService, sockUser, packet));
+            server.Start(_services);
 
             while (true)
             {
