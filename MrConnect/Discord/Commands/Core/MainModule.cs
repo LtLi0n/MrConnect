@@ -2,23 +2,20 @@
 using Discord;
 using Discord.Rest;
 using Discord.Commands;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using MrConnect.Services;
-using Discord.WebSocket;
-using System.Linq;
+using SharedDiscord;
+using DataServerHelpers;
 
 namespace MrConnect.Discord
 {
     [Group("main")]
     public class MainModule : ModuleBase<SocketCommandContext>
     {
-        public IAppConfig Config { get; set; }
+        public AppConfig Config { get; set; }
 
-        public ConnectorWoT WoT { get; set; }
-        public ConnectorDiscord Discord { get; set; }
+        public DiscordConnector Discord { get; set; }
 
         [Command("ping")]
         public async Task Ping()
@@ -40,17 +37,19 @@ namespace MrConnect.Discord
             RestUserMessage msg = null;
             EmbedBuilder eb = new EmbedBuilder();
 
+            GuildEmoji processing_emoji = await Discord.GuildEmoji.DownloadProcessingGif();
+
             eb.Fields = new List<EmbedFieldBuilder>()
             {
                 new EmbedFieldBuilder
                 {
                     Name = $"🔷 Discord Service 🔷",
-                    Value = $"{SharedEmoji.ProcessingGif} Pinging...\n\u200b"
+                    Value = $"{processing_emoji} Pinging...\n\u200b"
                 },
                 new EmbedFieldBuilder
                 {
                     Name = $"⚔️ WoT Service ⚔️",
-                    Value = $"{SharedEmoji.ProcessingGif} Pinging..."
+                    Value = $"{processing_emoji} Pinging..."
                 }
             };
 
@@ -64,13 +63,13 @@ namespace MrConnect.Discord
             }
 
             //WoT Service ping
-            {
+            /*{
                 await PingAndModifyField(WoT, eb.Fields[1]);
                 await msg.ModifyAsync(x => x.Embed = eb.Build());
-            }
+            }*/
         }
 
-        private async Task PingAndModifyField(IServerConnector connector, EmbedFieldBuilder field)
+        private async Task PingAndModifyField(ServerConnector connector, EmbedFieldBuilder field)
         {
             int state = await connector.Ping();
             ReflectServerResponse(field, state);
