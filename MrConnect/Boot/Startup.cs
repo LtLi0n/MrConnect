@@ -4,6 +4,7 @@ using LionLibrary.Framework;
 using LionLibrary.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using MrConnect.Services;
+using SharedDiscord;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,11 +30,15 @@ namespace MrConnect.Boot
         private IServiceProvider ConfigureServices()
         {
             ServiceCollection sc = new ServiceCollection();
-            ContainerConfig.RegisterTypes(sc);
-            sc.AddSingleton<IAppConfig, AppConfig>();
-            sc.AddSingleton<IDiscordService, DiscordService>();
-            sc.AddSingleton<ConnectorDiscord>();
-            sc.AddSingleton<ConnectorWoT>();
+            sc.RegisterLionLibraryTypes();
+            sc.AddSingleton<DiscordService>();
+            //sc.AddSingleton<ConnectorWoT>();
+
+            AppConfig config = new AppConfig();
+            sc.AddSingleton(config);
+
+            sc.AddSingleton<IDiscordServiceConnectionConfig>(config);
+            sc.AddSingleton<DiscordConnector>();
 
             return sc.BuildServiceProvider();
         }
@@ -42,14 +47,15 @@ namespace MrConnect.Boot
         {
             ILogService logger = _services.GetService<ILogService>();
             logger.Start();
+            logger.LogLevel = LogSeverity.Debug;
             logger.CursorVisible = false;
 
-            IDiscordService discord = _services.GetService<IDiscordService>();
+            DiscordService discord = _services.GetService<DiscordService>();
             await discord.InstallCommandsAsync();
             await discord.StartAsync();
 
-            await _services.GetService<ConnectorDiscord>().StartAsync();
-            await _services.GetService<ConnectorWoT>().StartAsync();
+            await _services.GetService<DiscordConnector>().StartAsync();
+            //await _services.GetService<ConnectorWoT>().StartAsync();
 
             await Task.Delay(-1);
         }

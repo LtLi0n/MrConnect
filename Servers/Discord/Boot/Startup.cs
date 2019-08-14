@@ -29,7 +29,7 @@ namespace ServerDiscord.Boot
         private IServiceProvider ConfigureServices()
         {
             ServiceCollection sc = new ServiceCollection();
-            ContainerConfig.RegisterTypes(sc);
+            sc.RegisterLionLibraryTypes();
             AppConfig config = new AppConfig();
             {
                 sc.AddSingleton<IConnectionStringConfig>(config);

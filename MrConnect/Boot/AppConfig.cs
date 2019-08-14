@@ -1,21 +1,20 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DataServerHelpers;
+using LionLibrary.Utils;
+using SharedDiscord;
 
 namespace MrConnect.Boot
 {
-    public class AppConfig : IAppConfig
+    public class AppConfig : AppConfigBase, IDiscordServiceConnectionConfig
     {
         public const string PATH_CONFIG = "data/config.json";
 
-        public IConfigurationRoot ConfigRoot { get; }
+        public AppConfig() : base(PATH_CONFIG) { }
 
-        public ulong OwnerId => GetValue<ulong>("discord:ownerId");
+        public ulong OwnerId => Value<ulong>("discord:ownerId");
 
-        public AppConfig()
-        {
-            ConfigRoot = new ConfigurationBuilder().AddJsonFile(PATH_CONFIG).Build();
-        }
-
-        public string this[string key] { get => ConfigRoot[key]; set => ConfigRoot[key] = value; }
-        public T GetValue<T>(string key) => ConfigRoot.GetValue<T>(key);
+        string IServiceConnectionConfig.ServerName => "Discord";
+        string IServiceConnectionConfig.Host => base["servers:discord:host"];
+        int IServiceConnectionConfig.Port => Value<int>("servers:discord:port");
+        string IServiceConnectionConfig.CertName => base["servers:discord:cert_sn"];
     }
 }
