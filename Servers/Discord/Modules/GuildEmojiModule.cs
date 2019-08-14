@@ -37,7 +37,7 @@ namespace ServerDiscord.Modules
         {
             if(HasArg(id))
             {
-                ReplyEntries(SQL.GuildEmojis, ParseIdsUInt64(id));
+                ReplyEntries(SQL.GuildEmojis, ParseIdsUInt64(Args[id]));
             }
             else if(HasArg(guild_id))
             {
@@ -46,7 +46,7 @@ namespace ServerDiscord.Modules
             }
             else
             {
-                ReplyEntries(SQL.GuildEmojis);
+                ReplyEntries(SQL.GuildEmojis, x => x.Id);
             }
 
             return Task.CompletedTask;
