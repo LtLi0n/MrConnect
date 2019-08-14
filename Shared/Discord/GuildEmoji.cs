@@ -27,6 +27,6 @@ namespace SharedDiscord
         [Column(Ref.animated)]
         public bool IsAnimated { get; set; } = false;
 
-        public override string ToString() => string.Format("<{0}:{1}:{2}>", IsAnimated ? ":a" : string.Empty, Name, Id);
+        public override string ToString() => string.Format("<{0}:{1}:{2}>", IsAnimated ? "a" : string.Empty, Name, Id);
     }
 }
