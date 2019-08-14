@@ -40,9 +40,9 @@ namespace ServerWoT.Services
         {
             optionsBuilder.UseMySql(
                 $"server={config["mysql:host"]};" +
-                $"database={config["mysql:database"]};" +
-                $"user={config["mysql:user"]};" +
-                $"password={config["mysql:password"]}");
+                $"database={config["servers:wot:mysql:database"]};" +
+                $"user={config["servers:wot:mysql:user"]};" +
+                $"password={config["servers:wot:mysql:password"]}");
         }
             
 
