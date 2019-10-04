@@ -6,7 +6,7 @@ using LionLibrary.SQL;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace SharedWoT.SQL
+namespace WoT.Shared.SQL
 {
     [Table("user")]
     public class User : IEntity<User, uint>
@@ -14,8 +14,13 @@ namespace SharedWoT.SQL
         [Key] [Column("id")]
         public uint Id { get; set; }
 
-        [Column("discord_id")]
+        [Required, Column("discord_id")]
         public ulong DiscordId { get; set; }
+
+        [Column("premium?")]
+        public bool IsPremium { get; set; } = false;
+
+        public UserSettings Settings { get; set; }
 
         [JsonIgnore] [IgnoreDataMember]
         public ICollection<Character> Characters { get; set; }
@@ -24,11 +29,11 @@ namespace SharedWoT.SQL
         {
             modelBuilder.Entity<User>(x =>
             {
+                x.HasIndex(x => x.DiscordId).IsUnique();
+
                 x.HasMany(user => user.Characters)
                 .WithOne(character => character.User)
                 .HasForeignKey(character => character.UserId);
-
-                x.HasIndex(x => x.DiscordId).IsUnique();
             });
         }
     }

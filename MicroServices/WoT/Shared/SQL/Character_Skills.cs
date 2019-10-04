@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace SharedWoT.SQL
+namespace WoT.Shared.SQL
 {
     [Owned]
     public class Character_Skills

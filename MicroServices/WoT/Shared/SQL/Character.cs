@@ -1,24 +1,27 @@
 ﻿using LionLibrary.SQL;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 using System.Text;
 
-namespace SharedWoT.SQL
+namespace WoT.Shared.SQL
 {
     [Table("character")]
     public class Character : IEntity<Character, uint>
     {
-        [Key] [Column("id")]
+        [Key, Column("id")]
         public uint Id { get; set; }
 
-        [Required] [Column("user_id")]
+        [Required, Column("user_id")]
         public uint UserId { get; set; }
+        [JsonIgnore, IgnoreDataMember]
         public User User { get; set; }
 
-        [Required] [Column("name", TypeName = "varchar(20)")]
+        [Required, Column("name", TypeName = "varchar(20)")]
         public string Name { get; set; }
 
         public Character_Skills Skills { get; set; }
