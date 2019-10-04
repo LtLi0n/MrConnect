@@ -3,11 +3,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>WoT.Server</RootNamespace>
+    <AssemblyName>WoT.Server</AssemblyName>
   </PropertyGroup>
 
-
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
@@ -15,19 +15,31 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3-beta1" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <ProjectReference Include="..\DataServerHelpers\DataServerHelpers.csproj" />
-    <ProjectReference Include="..\LionLibrary\LionLibrary\LionLibrary.csproj" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.1-preview1-final" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\DataServerHelpers\DataServerHelpers.csproj" />
+    <ProjectReference Include="..\..\..\LionLibrary\LionLibrary\LionLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="cert.p12">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="data\cert.p12">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="data\config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="data\key.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="key.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

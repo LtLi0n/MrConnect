@@ -4,7 +4,6 @@ using LionLibrary.Framework;
 using LionLibrary.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using MrConnect.Services;
-using SharedDiscord;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,9 +36,6 @@ namespace MrConnect.Boot
             AppConfig config = new AppConfig();
             sc.AddSingleton(config);
 
-            sc.AddSingleton<IDiscordServiceConnectionConfig>(config);
-            sc.AddSingleton<DiscordConnector>();
-
             return sc.BuildServiceProvider();
         }
 
@@ -54,7 +50,6 @@ namespace MrConnect.Boot
             await discord.InstallCommandsAsync();
             await discord.StartAsync();
 
-            await _services.GetService<DiscordConnector>().StartAsync();
             //await _services.GetService<ConnectorWoT>().StartAsync();
 
             await Task.Delay(-1);

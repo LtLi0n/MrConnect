@@ -5,7 +5,6 @@ using Discord.Commands;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MrConnect.Services;
-using SharedDiscord;
 using DataServerHelpers;
 
 namespace MrConnect.Discord
@@ -14,8 +13,6 @@ namespace MrConnect.Discord
     public class MainModule : ModuleBase<SocketCommandContext>
     {
         public AppConfig Config { get; set; }
-
-        public DiscordConnector Discord { get; set; }
 
         [Command("ping")]
         public async Task Ping()
@@ -37,7 +34,8 @@ namespace MrConnect.Discord
             RestUserMessage msg = null;
             EmbedBuilder eb = new EmbedBuilder();
 
-            GuildEmoji processing_emoji = await Discord.GuildEmoji.DownloadProcessingGif();
+            //GuildEmoji processing_emoji = await Discord.GuildEmoji.DownloadProcessingGif();
+            string processing_emoji = "<a:processing:603313837730693137>";
 
             eb.Fields = new List<EmbedFieldBuilder>()
             {
@@ -57,7 +55,7 @@ namespace MrConnect.Discord
             {
                 msg = (RestUserMessage)await ReplyAsync(embed: eb.Build());
 
-                await PingAndModifyField(Discord, eb.Fields[0]);
+                //await PingAndModifyField(Discord, eb.Fields[0]);
                 eb.Fields[0].Value += "\n\u200b";
                 await msg.ModifyAsync(x => x.Embed = eb.Build());
             }

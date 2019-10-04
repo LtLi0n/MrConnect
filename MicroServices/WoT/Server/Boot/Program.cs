@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using ServerWoT.Boot;
+using WoT.Server.Boot;
 
-namespace ServerWoT
+namespace WoT.Server
 {
     class Program
     {

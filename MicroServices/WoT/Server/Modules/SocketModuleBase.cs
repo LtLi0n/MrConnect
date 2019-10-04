@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ServerWoT.Modules
+namespace WoT.Server.Modules
 {
     public class SocketModuleBase<T> : BetterModuleBase<T> where T : CustomCommandContext
     {

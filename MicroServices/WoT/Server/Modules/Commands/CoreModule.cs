@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerWoT.Modules
+namespace WoT.Server.Modules
 {
-    [Module("user")]
-    public class UserModule : SocketModuleBase<CustomCommandContext>
+    [Module("core")]
+    public class CoreModule : SocketModuleBase<CustomCommandContext>
     {
         [Command("ping")]
         public async Task Ping()

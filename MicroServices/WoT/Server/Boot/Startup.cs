@@ -8,9 +8,9 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using ServerWoT.Services;
+using WoT.Server.Services;
 
-namespace ServerWoT.Boot
+namespace WoT.Server.Boot
 {
     public class Startup
     {
@@ -27,10 +27,18 @@ namespace ServerWoT.Boot
         private IServiceProvider ConfigureServices()
         {
             ServiceCollection sc = new ServiceCollection();
-            ContainerConfig.RegisterTypes(sc);
-            sc.AddSingleton<IAppConfig, AppConfig>();
-            sc.AddSingleton<ISslTcpServer, SslTcpServer>();
-            sc.AddTransient<IDataContext, DataContext>();
+            sc.RegisterLionLibraryTypes();
+            
+            AppConfig config = new AppConfig();
+            {
+                sc.AddSingleton(config);
+                sc.AddSingleton<IServerConfig>(config);
+                sc.AddSingleton<ISslServerConfig>(config);
+                sc.AddSingleton<IDataModuleConfig>(config);
+            }
+
+            sc.AddSingleton<WoTServer>();
+            sc.AddDbContext<WoTDbContext>(x => WoTDbContext.UseMySqlOptions(x, config), contextLifetime: ServiceLifetime.Transient);
 
             return sc.BuildServiceProvider();
         }
@@ -41,8 +49,10 @@ namespace ServerWoT.Boot
             logger.Start();
             logger.CursorVisible = false;
 
-            await _services.GetService<ICommandService>().InstallCommandsAsync(Assembly.GetExecutingAssembly(), _services);
-            _services.GetService<ISslTcpServer>().Start(_services);
+            await _services.GetService<ICommandService>()
+                .InstallCommandsAsync(Assembly.GetExecutingAssembly(), _services);
+            
+            _services.GetService<WoTServer>().Start(_services);
 
             while (true)
             {

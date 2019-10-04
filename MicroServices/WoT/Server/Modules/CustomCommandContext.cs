@@ -1,13 +1,14 @@
 ﻿using LionLibrary.Network;
 using LionLibrary.Commands;
-using ServerWoT.Network;
+using WoT.Server.Network;
+using DataServerHelpers;
 
-namespace ServerWoT.Modules
+namespace WoT.Server.Modules
 {
     public class CustomCommandContext : SocketCommandContext
     {
         public ICommandService Commands { get; }
-        public SocketUser User { get; }
+        public IContextSocketUser User { get; }
 
         public CustomCommandContext(
             ICommandService commands,

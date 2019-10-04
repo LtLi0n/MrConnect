@@ -8,42 +8,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
-using ServerWoT.Boot;
+using WoT.Server.Boot;
+using Microsoft.EntityFrameworkCore.Design;
 
-namespace ServerWoT.Services
+namespace WoT.Server.Services
 {
-    public class DataContext : DbContext, IDataContext
+    public class WoTDbContext : DbContext
     {
-        private readonly ILogService _logger;
-        private readonly IAppConfig _config;
+        private readonly IServiceProvider _services;
 
-        public DataContext(DbContextOptions<DataContext> options, ILogService logger = null) : base(options)
-        {
-            _logger = logger;
-            Init();
-        }
-
-        public DataContext(IAppConfig config, ILogService logger) : base()
-        {
-            _config = config;
-            _logger = logger;
-            SyncMysqlOptions(new DbContextOptionsBuilder(), config.ConfigRoot);
-            Init();
-        }
-
-        private void Init()
-        {
-
-        }
-
-        public static void SyncMysqlOptions(DbContextOptionsBuilder optionsBuilder, IConfigurationRoot config)
-        {
-            optionsBuilder.UseMySql(
-                $"server={config["mysql:host"]};" +
-                $"database={config["servers:wot:mysql:database"]};" +
-                $"user={config["servers:wot:mysql:user"]};" +
-                $"password={config["servers:wot:mysql:password"]}");
-        }
+        public WoTDbContext(DbContextOptions<WoTDbContext> options) : base(options) { }
             
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -52,15 +26,13 @@ namespace ServerWoT.Services
 
             if (!optionsBuilder.IsConfigured)
             {
-                if (_config != null) SyncMysqlOptions(optionsBuilder, _config.ConfigRoot);
-                else throw new ArgumentNullException("Configuration failed.");
+                throw new ArgumentNullException("Configuration failed.");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);   
-            _logger?.LogLine(this, "Entities configured.");
+            base.OnModelCreating(modelBuilder);
         }
 
         ///<summary>Adds an object to the database.</summary>
@@ -87,5 +59,23 @@ namespace ServerWoT.Services
         public async Task UpdateEntityAsync<U1, U2>(IEntity<U1, U2> entity, IDictionary<string, object> update_values) 
             where U1 : class => 
             await Extensions.UpdateEntityAsync(this, entity, update_values);
+
+        public static void UseMySqlOptions(DbContextOptionsBuilder optionsBuilder, AppConfig config) =>
+            optionsBuilder.UseMySql(
+                $"server={config["mysql:host"]};" +
+                $"database={config["servers:wot:mysql:database"]};" +
+                $"user={config["servers:wot:mysql:user"]};" +
+                $"password={config["servers:wot:mysql:password"]}");
+    }
+
+    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<WoTDbContext>
+    {
+        public WoTDbContext CreateDbContext(string[] args)
+        {
+            AppConfig config = new AppConfig();
+            var builder = new DbContextOptionsBuilder<WoTDbContext>();
+            WoTDbContext.UseMySqlOptions(builder, config);
+            return new WoTDbContext(builder.Options);
+        }
     }
 }

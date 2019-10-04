@@ -51,7 +51,7 @@ namespace DataServerHelpers
                     }
                     Packet response = await response_task;
 
-                    return response.State;
+                    return (int)response.Status;
                 }
 
                 return -2;

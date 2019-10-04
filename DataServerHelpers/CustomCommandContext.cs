@@ -6,11 +6,11 @@ namespace DataServerHelpers
     public class CustomCommandContext : SocketCommandContext
     {
         public ICommandService Commands { get; }
-        public SocketUser User { get; }
+        public IContextSocketUser User { get; }
 
         public CustomCommandContext(
             ICommandService commands,
-            SocketUser user,
+            IContextSocketUser user,
             Packet packet) : base(packet)
         {
             Commands = commands;
