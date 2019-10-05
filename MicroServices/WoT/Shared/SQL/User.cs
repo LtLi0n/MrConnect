@@ -6,23 +6,31 @@ using LionLibrary.SQL;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace WoT.Shared.SQL
+namespace WoT.Shared
 {
-    [Table("user")]
+    [Table("users")]
     public class User : IEntity<User, uint>
     {
-        [Key] [Column("id")]
+        public static class Ref
+        {
+            public const string DiscordId = "discord_id";
+            public const string IsPremium = "premium?";
+            public const string Settings = "settings";
+        }
+
+        [Key, Column(SharedRef.Id)]
         public uint Id { get; set; }
 
-        [Required, Column("discord_id")]
+        [Required, Column(Ref.DiscordId)]
         public ulong DiscordId { get; set; }
 
-        [Column("premium?")]
+        [Column(Ref.IsPremium)]
         public bool IsPremium { get; set; } = false;
 
+        [Column(Ref.Settings)]
         public UserSettings Settings { get; set; }
 
-        [JsonIgnore] [IgnoreDataMember]
+        [JsonIgnore, IgnoreDataMember]
         public ICollection<Character> Characters { get; set; }
 
         public static void CreateModel(ModelBuilder modelBuilder)
