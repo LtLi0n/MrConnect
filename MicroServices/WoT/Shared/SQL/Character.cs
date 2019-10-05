@@ -8,20 +8,26 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace WoT.Shared.SQL
+namespace WoT.Shared
 {
-    [Table("character")]
+    [Table("characters")]
     public class Character : IEntity<Character, uint>
     {
-        [Key, Column("id")]
+        public static class Ref
+        {
+            public const string UserId = "user_id";
+            public const string Name = "name";
+        }
+
+        [Key, Column(SharedRef.Id)]
         public uint Id { get; set; }
 
-        [Required, Column("user_id")]
+        [Required, Column(Ref.UserId)]
         public uint UserId { get; set; }
         [JsonIgnore, IgnoreDataMember]
         public User User { get; set; }
 
-        [Required, Column("name", TypeName = "varchar(20)")]
+        [Required, Column(Ref.Name, TypeName = "varchar(20)")]
         public string Name { get; set; }
 
         public Character_Skills Skills { get; set; }
