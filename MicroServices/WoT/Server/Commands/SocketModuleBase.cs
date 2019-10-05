@@ -1,12 +1,9 @@
-﻿using LionLibrary.Commands;
+﻿using DataServerHelpers;
+using LionLibrary.Commands;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace WoT.Server.Modules
+namespace WoT.Server.Commands
 {
     public class SocketModuleBase<T> : BetterModuleBase<T> where T : CustomCommandContext
     {

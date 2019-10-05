@@ -10,11 +10,15 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
 using WoT.Server.Boot;
 using Microsoft.EntityFrameworkCore.Design;
+using WoT.Shared;
 
 namespace WoT.Server.Services
 {
     public class WoTDbContext : DbContext
     {
+        ///<summary>users</summary>
+        public DbSet<User> Users { get; set; }
+
         private readonly IServiceProvider _services;
 
         public WoTDbContext(DbContextOptions<WoTDbContext> options) : base(options) { }

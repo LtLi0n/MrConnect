@@ -9,10 +9,11 @@ using LionLibrary.Utils;
 
 namespace DataServerHelpers
 {
-    public class SocketDataModuleBase<ContextT, IDataContext> : SocketModuleBase<ContextT>
+    public class SocketDataModuleBase<ContextT, TDbContext> : SocketModuleBase<ContextT>
         where ContextT : CustomCommandContext
+        where TDbContext : DbContext
     {
-        public IDataContext SQL { get; set; }
+        public TDbContext SQL { get; set; }
         public IDataModuleConfig Config { get; set; }
         public DbContext DbContext => SQL as DbContext;
 

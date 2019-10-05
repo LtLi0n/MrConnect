@@ -1,10 +1,8 @@
 ﻿using LionLibrary.Commands;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using DataServerHelpers;
 
-namespace WoT.Server.Modules
+namespace WoT.Server.Commands.Core
 {
     [Module("core")]
     public class CoreModule : SocketModuleBase<CustomCommandContext>
