@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using WoT.Shared;
 
 namespace MrConnect.Boot
 {
@@ -31,10 +32,13 @@ namespace MrConnect.Boot
             ServiceCollection sc = new ServiceCollection();
             sc.RegisterLionLibraryTypes();
             sc.AddSingleton<DiscordService>();
-            //sc.AddSingleton<ConnectorWoT>();
+            sc.AddSingleton<WoTConnector>();
 
             AppConfig config = new AppConfig();
-            sc.AddSingleton(config);
+            {
+                sc.AddSingleton(config);
+                sc.AddSingleton<IWoTServiceConnectionConfig>(config);
+            }
 
             return sc.BuildServiceProvider();
         }
@@ -50,7 +54,7 @@ namespace MrConnect.Boot
             await discord.InstallCommandsAsync();
             await discord.StartAsync();
 
-            //await _services.GetService<ConnectorWoT>().StartAsync();
+            await _services.GetService<WoTConnector>().StartAsync();
 
             await Task.Delay(-1);
         }

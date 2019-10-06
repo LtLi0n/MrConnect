@@ -1,7 +1,7 @@
 ﻿using LionLibrary.Network;
 using System.Threading.Tasks;
 
-using static WoT.Shared.SharedRef;
+using static DataServerHelpers.SharedRef;
 using static WoT.Shared.User.Ref;
 
 namespace WoT.Shared

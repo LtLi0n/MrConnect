@@ -2,13 +2,13 @@
 using LionLibrary.Network;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace WoT.Shared
 {
-    public class WoTConnector : ServerConnector
+    public class WoTConnector : ServerConnector, IWoTServiceConnectionConfig
     {
+        public UserApi Users => base.GetController<UserApi>();
+
         public WoTConnector(
             IServiceProvider services,
             IWoTServiceConnectionConfig config,
@@ -16,7 +16,7 @@ namespace WoT.Shared
 
         protected override void CreateApiControllers(ServiceCollection routes)
         {
-            
+            routes.AddSingleton(new UserApi(this));
         }
     }
 }

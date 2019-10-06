@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MrConnect.Services;
 using DataServerHelpers;
+using WoT.Shared;
+using LionLibrary.Network;
 
 namespace MrConnect.Discord
 {
@@ -13,6 +15,7 @@ namespace MrConnect.Discord
     public class MainModule : ModuleBase<SocketCommandContext>
     {
         public AppConfig Config { get; set; }
+        public WoTConnector WoT { get; set; }
 
         [Command("ping")]
         public async Task Ping()
@@ -20,12 +23,13 @@ namespace MrConnect.Discord
             await ReplyAsync("pong!");
         }
 
-        private void ReflectServerResponse(EmbedFieldBuilder efb, int state) =>
+        private void ReflectServerResponse(EmbedFieldBuilder efb, StatusCode state) =>
             efb.Value = state switch
             {
-                -2 => "❌ Offline",
-                -3 => "⚠️ Not responding",
-                _ => "🌐 Online"
+                StatusCode.NotConnected => "❌ Offline",
+                StatusCode.Timeout => "⚠️ Not responding",
+                StatusCode.Success => "🌐 Online",
+                _ => "Failure"
             };
 
         [Command("status", RunMode = RunMode.Async)]
@@ -41,21 +45,16 @@ namespace MrConnect.Discord
             {
                 new EmbedFieldBuilder
                 {
-                    Name = $"🔷 Discord Service 🔷",
-                    Value = $"{processing_emoji} Pinging...\n\u200b"
-                },
-                new EmbedFieldBuilder
-                {
                     Name = $"⚔️ WoT Service ⚔️",
                     Value = $"{processing_emoji} Pinging..."
                 }
             };
 
-            //Discord Service ping
+            //WoT Service ping
             {
                 msg = (RestUserMessage)await ReplyAsync(embed: eb.Build());
 
-                //await PingAndModifyField(Discord, eb.Fields[0]);
+                await PingAndModifyField(WoT, eb.Fields[0]);
                 eb.Fields[0].Value += "\n\u200b";
                 await msg.ModifyAsync(x => x.Embed = eb.Build());
             }
@@ -69,7 +68,7 @@ namespace MrConnect.Discord
 
         private async Task PingAndModifyField(ServerConnector connector, EmbedFieldBuilder field)
         {
-            int state = await connector.Ping();
+            StatusCode state = await connector.Ping();
             ReflectServerResponse(field, state);
         }
 
