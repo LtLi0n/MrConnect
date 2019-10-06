@@ -9,10 +9,10 @@ namespace WoT.Server.Boot
 
         public IConfigurationRoot ConfigRoot { get; }
 
-        string ISslServerConfig.CertFile => base["server:host"];
-        string ISslServerConfig.CertPassword => throw new System.NotImplementedException();
-        string IServerConfig.Host { get; } = "localhost";
-        int IServerConfig.Port { get; } = 6001;
+        string ISslServerConfig.CertFile => base["server:cert_file"];
+        string ISslServerConfig.CertPassword => base["server:cert_pwd"];
+        string IServerConfig.Host => base["server:host"];
+        int IServerConfig.Port => Value<int>("server:port");
 
         int IDataModuleConfig.MaxEntriesPerPage { get; } = 500;
 
