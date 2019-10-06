@@ -74,34 +74,10 @@ namespace MrConnect.Services
 
             // Determine if the message is a command based on the prefix and make sure no bots trigger commands
             if (!(message.HasStringPrefix(_config.Prefix, ref argPos) ||
-                message.HasMentionPrefix(Client.CurrentUser, ref argPos)))
+                message.HasMentionPrefix(Client.CurrentUser, ref argPos)) ||
+                message.Author.IsBot)
             {
-                if(!message.Author.IsBot)
-                {
-                    /*_discordConn.Client.SendPacket(x =>
-                    {
-                        x.Header = "user.add";
-                        x[Id] = msg.Author.Id;
-                        x["Username"] = msg.Author.Username;
-                        x["Discriminator"] = msg.Author.Discriminator;
-                    });
-
-                    _discordConn.Client.SendPacket(x =>
-                    {
-                        x.Header = "message.add";
-                        x[Id] = msg.Id;
-                        x[ChannelId] = msg.Channel.Id;
-                        x[UserId] = msg.Author.Id;
-                        x[Content] = msg.Content;
-                        x[TimeStamp] = msg.Timestamp.ToUnixTimeSeconds();
-                        if (msg.Channel is SocketGuildChannel guildChannel)
-                        {
-                            x[GuildId] = guildChannel.Guild.Id;
-                        }
-                    });*/
-
-                    return;
-                }
+                return;
             }
 
             // Create a WebSocket-based command context based on the message
@@ -121,8 +97,10 @@ namespace MrConnect.Services
             // to be executed; however, this may not always be desired,
             // as it may clog up the request queue should a user spam a
             // command.
-            // if (!result.IsSuccess)
-            // await context.Channel.SendMessageAsync(result.ErrorReason);
+            if (!result.IsSuccess)
+            {
+                await context.Channel.SendMessageAsync(result.ErrorReason);
+            }
         }
     }
 }
