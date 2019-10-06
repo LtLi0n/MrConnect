@@ -58,9 +58,11 @@ namespace DataServerHelpers
         ///<typeparam name="TResult">Selector result.</typeparam>
         ///<param name="set">Entity Set. Can pass DbSet&lt;<typeparamref name="T"/>&gt; because it inherits from IQuerable&lt;<typeparamref name="T"/>&gt;.</param>
         ///<param name="selector">Optional query format. If null, a whole object is retrieved.</param>
-        public void ReplyEntries<T>(IQueryable<T> set)
+        public void ReplyFullEntries<T>(IQueryable<T> set)
             where T : class =>
-            Reply(set.Skip(GetArgInt32("page") * Config.MaxEntriesPerPage).Take(Config.MaxEntriesPerPage));
+            Reply(set
+                .Skip(GetArgInt32("page") * Config.MaxEntriesPerPage)
+                .Take(Config.MaxEntriesPerPage));
 
         ///<summary>Return this for get requests, whenever no arguments are provided.</summary>
         ///<typeparam name="T">Entity type.</typeparam>
@@ -69,7 +71,20 @@ namespace DataServerHelpers
         ///<param name="selector">Query format.</param>
         public void ReplyEntries<T, TResult>(IQueryable<T> set, Expression<Func<T, TResult>> selector)
             where T : class =>
-            Reply(set.Skip(GetArgInt32("page") * Config.MaxEntriesPerPage).Take(Config.MaxEntriesPerPage).Select(selector));
+            Reply(set
+                .Skip(GetArgInt32(SharedRef.Page) * Config.MaxEntriesPerPage)
+                .Take(Config.MaxEntriesPerPage)
+                .Select(selector));
+
+        ///<typeparam name="T">Entity type.</typeparam>
+        ///<param name="set">Entity Set. Can pass DbSet&lt;<typeparamref name="T"/>&gt; because it inherits from IQuerable&lt;<typeparamref name="T"/>&gt;.</param>
+        ///<param name="dynamicSelector">Query format.</param>
+        public void ReplyEntries<T>(IQueryable<T> set) =>
+            Reply(set
+                .Skip(GetArgInt32(SharedRef.Page) * Config.MaxEntriesPerPage)
+                .Take(Config.MaxEntriesPerPage)
+                .Where(base.Context)
+                .Select(base.Context));
 
         public void ReplyEntries<EntityT, PKType>(IQueryable<EntityT> db_set, PKType[] pkArr)
             where EntityT : class, IEntity<EntityT, PKType>
