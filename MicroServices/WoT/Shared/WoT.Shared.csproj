@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\DataServerHelpers\DataServerHelpers.csproj" />
     <ProjectReference Include="..\..\..\LionLibrary\LionLibrary\LionLibrary.csproj" />
   </ItemGroup>
 

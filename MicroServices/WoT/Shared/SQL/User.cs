@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
+using DataServerHelpers;
 using LionLibrary.SQL;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -28,7 +29,7 @@ namespace WoT.Shared
         public bool IsPremium { get; set; } = false;
 
         [Column(Ref.Settings)]
-        public UserSettings Settings { get; set; }
+        public UserSettings Settings { get; set; } = UserSettings.Default;
 
         [JsonIgnore, IgnoreDataMember]
         public ICollection<Character> Characters { get; set; }
