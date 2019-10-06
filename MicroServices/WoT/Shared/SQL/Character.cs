@@ -16,19 +16,19 @@ namespace WoT.Shared
     {
         public static class Ref
         {
-            public const string UserId = "user_id";
-            public const string Name = "name";
+            public const string UserId = "UserId";
+            public const string Name = "Name";
         }
 
-        [Key, Column(SharedRef.Id)]
+        [Key]
         public uint Id { get; set; }
 
-        [Required, Column(Ref.UserId)]
+        [Required]
         public uint UserId { get; set; }
         [JsonIgnore, IgnoreDataMember]
         public User User { get; set; }
 
-        [Required, Column(Ref.Name, TypeName = "varchar(20)")]
+        [Required, Column(TypeName = "varchar(20)")]
         public string Name { get; set; }
 
         public Character_Skills Skills { get; set; }

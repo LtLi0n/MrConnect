@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using WoT.Server.Boot;
 using Microsoft.EntityFrameworkCore.Design;
 using WoT.Shared;
+using LionLibrary.Utils;
 
 namespace WoT.Server.Services
 {
@@ -18,6 +19,7 @@ namespace WoT.Server.Services
     {
         ///<summary>users</summary>
         public DbSet<User> Users { get; set; }
+        public DbSet<Character> Characters { get; set; }
 
         private readonly IServiceProvider _services;
 
@@ -36,6 +38,9 @@ namespace WoT.Server.Services
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            User.CreateModel(modelBuilder);
+            Character.CreateModel(modelBuilder);
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -64,12 +69,12 @@ namespace WoT.Server.Services
             where U1 : class => 
             await Extensions.UpdateEntityAsync(this, entity, update_values);
 
-        public static void UseMySqlOptions(DbContextOptionsBuilder optionsBuilder, AppConfig config) =>
+        public static void UseMySqlOptions(DbContextOptionsBuilder optionsBuilder, IConnectionStringConfig config) =>
             optionsBuilder.UseMySql(
-                $"server={config["mysql:host"]};" +
-                $"database={config["servers:wot:mysql:database"]};" +
-                $"user={config["servers:wot:mysql:user"]};" +
-                $"password={config["servers:wot:mysql:password"]}");
+                $"server={config.Server};" +
+                $"database={config.Database};" +
+                $"user={config.User};" +
+                $"password={config.Password}");
     }
 
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<WoTDbContext>

@@ -14,21 +14,19 @@ namespace WoT.Shared
     {
         public static class Ref
         {
-            public const string DiscordId = "discord_id";
-            public const string IsPremium = "premium?";
-            public const string Settings = "settings";
+            public const string DiscordId = "DiscordId";
+            public const string IsPremium = "IsPremium";
+            public const string Settings = "Settings";
         }
 
-        [Key, Column(SharedRef.Id)]
+        [Key]
         public uint Id { get; set; }
 
-        [Required, Column(Ref.DiscordId)]
+        [Required]
         public ulong DiscordId { get; set; }
 
-        [Column(Ref.IsPremium)]
         public bool IsPremium { get; set; } = false;
 
-        [Column(Ref.Settings)]
         public UserSettings Settings { get; set; } = UserSettings.Default;
 
         [JsonIgnore, IgnoreDataMember]

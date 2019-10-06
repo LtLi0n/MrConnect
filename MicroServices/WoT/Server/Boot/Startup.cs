@@ -35,10 +35,13 @@ namespace WoT.Server.Boot
                 sc.AddSingleton<IServerConfig>(config);
                 sc.AddSingleton<ISslServerConfig>(config);
                 sc.AddSingleton<IDataModuleConfig>(config);
+                sc.AddSingleton<IConnectionStringConfig>(config);
             }
 
             sc.AddSingleton<WoTServer>();
-            sc.AddDbContext<WoTDbContext>(x => WoTDbContext.UseMySqlOptions(x, config), contextLifetime: ServiceLifetime.Transient);
+            sc.AddDbContext<WoTDbContext>(
+                x => WoTDbContext.UseMySqlOptions(x, config),
+                contextLifetime: ServiceLifetime.Transient);
 
             return sc.BuildServiceProvider();
         }

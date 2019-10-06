@@ -2,9 +2,9 @@
 {
     public static class SharedRef
     {
-        public const string Id = "id";
-        public const string Select = "select";
-        public const string Where = "where";
-        public const string Page = "page";
+        public const string Id = "Id";
+        public const string Select = "Select";
+        public const string Where = "Where";
+        public const string Page = "Page";
     }
 }

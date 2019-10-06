@@ -30,7 +30,7 @@ namespace WoT.Server.Commands.Entities
             User entity = new User();
             ApplyInput(entity);
             uint id = await AddEntityAsync(entity);
-            Reply($"User '{entity.DiscordId}' has been successfully added.", id);
+            Reply($"User `{entity.DiscordId}` has been successfully added.", id);
         }
 
         [Command("get")]
