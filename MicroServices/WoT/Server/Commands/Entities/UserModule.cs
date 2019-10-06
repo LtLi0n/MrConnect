@@ -5,7 +5,7 @@ using WoT.Shared;
 using WoT.Server.Services;
 using DataServerHelpers;
 
-using static WoT.Shared.SharedRef;
+using static DataServerHelpers.SharedRef;
 using static WoT.Shared.User.Ref;
 
 namespace WoT.Server.Commands.Entities
@@ -17,6 +17,7 @@ namespace WoT.Server.Commands.Entities
     {
         public void ApplyInput(User entity, bool assign_mandatory = true)
         {
+            TryFill<ulong>(DiscordId, x => entity.DiscordId = x);
             TryFill<bool>(IsPremium, x => entity.IsPremium = x);
             TryFill<ulong>(Settings, x => entity.Settings = (UserSettings)x);
         }
@@ -26,9 +27,9 @@ namespace WoT.Server.Commands.Entities
         [OptionalArguments(IsPremium, Settings)]
         public async Task AddAsync()
         {
-            User entity = new User { DiscordId = GetArgUInt64(DiscordId) };
-
-            ulong id = await AddEntityAsync(entity);
+            User entity = new User();
+            ApplyInput(entity);
+            uint id = await AddEntityAsync(entity);
             Reply($"User '{entity.DiscordId}' has been successfully added.", id);
         }
 
