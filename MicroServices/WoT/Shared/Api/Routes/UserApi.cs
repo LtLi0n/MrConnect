@@ -1,5 +1,7 @@
 ﻿using LionLibrary.Network;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 using static DataServerHelpers.SharedRef;
 using static WoT.Shared.User.Ref;
@@ -33,6 +35,12 @@ namespace WoT.Shared
         public async Task<Packet> GetAsync(string select, string where = null) =>
             await Client.GetEntitiesAsync(GET, Select, select, Where, where);
 
+        public async Task<User> GetByDiscordIdAsync(ulong discordId)
+        {
+            Packet userPacket = await GetAsync("x => x", $"{DiscordId} == {discordId}");
+            return userPacket.As<IEnumerable<User>>().FirstOrDefault();
+        }
+
         public async Task<Packet<User>> GetAsync(uint[] ids) =>
             await Client.GetEntitiesAsync<User, uint>(GET, Id, ids);
 
@@ -41,5 +49,11 @@ namespace WoT.Shared
 
         public async Task<Packet> RemoveAsync(uint entity_id) =>
             await Client.RemoveEntityAsync(REMOVE, Id, entity_id);
+
+        public async Task<Packet> RemoveByDiscordIdAsync(ulong discordId)
+        {
+            User user = await GetByDiscordIdAsync(discordId);
+            return user != null ? await Client.RemoveEntityAsync(REMOVE, Id, user.Id) : null;
+        }
     }
 }
