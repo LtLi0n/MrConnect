@@ -51,7 +51,16 @@ namespace WoT.Server.Boot
 
             await _services.GetService<ICommandService>()
                 .InstallCommandsAsync(Assembly.GetExecutingAssembly(), _services);
-            
+
+            //Init server
+            _services.GetService<WoTServer>().Init(
+                client => new Network.SocketUser(client),
+                (cService, user, packet) => new DataServerHelpers.CustomCommandContext(
+                    _services.GetService<ICommandService>(), 
+                    user, 
+                    packet));
+
+            //Start server
             _services.GetService<WoTServer>().Start(_services);
 
             while (true)
