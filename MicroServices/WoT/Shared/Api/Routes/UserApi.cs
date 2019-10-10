@@ -11,10 +11,21 @@ namespace WoT.Shared
     public class UserApi : ApiController, IApiControllerCRUD<User, uint>
     {
         public const string MODULE = "users";
-        public static string ADD { get; } = $"{MODULE}.add";
-        public static string GET { get; } = $"{MODULE}.get";
-        public static string MODIFY { get; } = $"{MODULE}.modify";
-        public static string REMOVE { get; } = $"{MODULE}.remove";
+        private static string ADD { get; } = $"{MODULE}.add";
+        private static string GET { get; } = $"{MODULE}.get";
+        private static string MODIFY { get; } = $"{MODULE}.modify";
+        private static string REMOVE { get; } = $"{MODULE}.remove";
+
+        public string IdTag => Id;
+        public string SelectTag => Select;
+        public string WhereTag => Where;
+
+        public string AddRoute => ADD;
+        public string GetRoute => GET;
+        public string ModifyRoute => MODIFY;
+        public string RemoveRoute => REMOVE;
+
+        public IApiControllerCRUD<User, uint> CRUD => this;
 
         public UserApi(WoTConnector connector) : base(connector) { }
 
@@ -26,34 +37,16 @@ namespace WoT.Shared
             pb[Settings] = (ulong)entity.Settings;
         }
 
-        public async Task<Packet> AddAsync(User entity) =>
-            await Client.AddEntityAsync(ADD, entity, FillPacketBucket);
-
-        public async Task<Packet<User>> GetAsync(uint entity_id) =>
-            await Client.GetEntityAsync<User>(GET, Id, entity_id);
-
-        public async Task<Packet> GetAsync(string select, string where = null) =>
-            await Client.GetEntitiesAsync(GET, Select, select, Where, where);
-
         public async Task<User> GetByDiscordIdAsync(ulong discordId)
         {
-            Packet userPacket = await GetAsync("x => x", $"{DiscordId} == {discordId}");
+            Packet userPacket = await CRUD.GetAsync("x => x", $"{DiscordId} == {discordId}");
             return userPacket.As<IEnumerable<User>>().FirstOrDefault();
         }
-
-        public async Task<Packet<User>> GetAsync(uint[] ids) =>
-            await Client.GetEntitiesAsync<User, uint>(GET, Id, ids);
-
-        public async Task<Packet> ModifyAsync(User entity) =>
-            await Client.ModifyEntityAsync(MODIFY, entity, FillPacketBucket);
-
-        public async Task<Packet> RemoveAsync(uint entity_id) =>
-            await Client.RemoveEntityAsync(REMOVE, Id, entity_id);
 
         public async Task<Packet> RemoveByDiscordIdAsync(ulong discordId)
         {
             User user = await GetByDiscordIdAsync(discordId);
-            return user != null ? await Client.RemoveEntityAsync(REMOVE, Id, user.Id) : null;
+            return user != null ? await CRUD.RemoveAsync(user.Id) : null;
         }
     }
 }
