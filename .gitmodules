@@ -1,4 +1,4 @@
 [submodule "LionLibrary"]
 	path = LionLibrary
 	url = https://github.com/LtLi0n/LionLibrary
-	branch = commands-2.0
+	branch = dev-2.0
