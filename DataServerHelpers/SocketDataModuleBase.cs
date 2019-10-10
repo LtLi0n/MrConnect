@@ -27,9 +27,17 @@ namespace DataServerHelpers
             where PKType : struct, IComparable, IComparable<PKType>, IConvertible, IEquatable<PKType>, IFormattable =>
             await DbContext.AddEntityAsync(entity);
 
+        public async Task AddEntityAsync<EntityT>(IEntityBase<EntityT> entity)
+            where EntityT : class =>
+            await DbContext.AddEntityAsync(entity);
+
         public async Task UpdateEntityAsync<EntityT, PKType>(IEntity<EntityT, PKType> entity)
             where EntityT : class, IEntity<EntityT, PKType>
             where PKType : struct, IComparable, IComparable<PKType>, IConvertible, IEquatable<PKType>, IFormattable =>
+            await DbContext.UpdateEntityAsync(entity);
+
+        public async Task UpdateEntityAsync<EntityT>(IEntityBase<EntityT> entity)
+            where EntityT : class =>
             await DbContext.UpdateEntityAsync(entity);
 
         public IEnumerable<EntityT> GetEntities<EntityT, PKType>(IQueryable<EntityT> dbset, PKType[] pkArr)
@@ -44,6 +52,13 @@ namespace DataServerHelpers
         public async Task RemoveEntityAsync<EntityT, PKType>(IEntity<EntityT, PKType> entity)
             where EntityT : class, IEntity<EntityT, PKType>
             where PKType : struct, IComparable, IComparable<PKType>, IConvertible, IEquatable<PKType>, IFormattable
+        {
+            DbContext.Remove(entity);
+            await SaveChangesAsync();
+        }
+
+        public async Task RemoveEntityAsync<EntityT>(IEntityBase<EntityT> entity)
+            where EntityT : class
         {
             DbContext.Remove(entity);
             await SaveChangesAsync();

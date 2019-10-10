@@ -1,9 +1,11 @@
 ﻿using LionLibrary.SQL;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace WoT.Shared
 {
@@ -12,6 +14,7 @@ namespace WoT.Shared
     {
         public static class Ref
         {
+            public const string CharacterId = "CharacterId";
             public const string IsWorking = "IsWorking";
             public const string StartedWorkAt = "StartedWorkAt";
             public const string WorkFinishesAt = "WorkFinishesAt";
@@ -20,6 +23,7 @@ namespace WoT.Shared
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public uint CharacterId { get; set; }
+        [JsonIgnore, IgnoreDataMember]
         public Character Character { get; set; }
 
         public bool IsWorking { get; set; }

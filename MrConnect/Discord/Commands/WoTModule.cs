@@ -18,9 +18,10 @@ namespace MrConnect.Discord
     {
         public AppConfig Config { get; set; }
         public WoTConnector WoT { get; set; }
+        public UserApi UserApi => WoT.GetController<UserApi>();
 
         [RequireOwner]
-        [Command("cmd")]
+        [Command("cmd", RunMode = RunMode.Async)]
         public async Task CmdAsync([Remainder]string query)
         {
             string[] inputs = query.Split(' ');
@@ -66,7 +67,7 @@ namespace MrConnect.Discord
             }
             else
             {
-                Packet response = await WoT.Users.AddAsync(new User() { DiscordId = Context.User.Id });
+                Packet response = await UserApi.CRUD.AddAsync(new User() { DiscordId = Context.User.Id });
                 await ReplyAsync(response.Content);
             }
         }

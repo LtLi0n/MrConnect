@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WoT.Server.Services;
 
 namespace WoT.Server.Migrations
 {
     [DbContext(typeof(WoTDbContext))]
-    partial class WoTDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191010220355_CharacterSkillsRemoval")]
+    partial class CharacterSkillsRemoval
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

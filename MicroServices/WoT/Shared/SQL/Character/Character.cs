@@ -31,8 +31,7 @@ namespace WoT.Shared
         [Required, Column(TypeName = "varchar(32)")]
         public string Name { get; set; }
 
-        public Character_Skills Skills { get; set; }
-
+        [JsonIgnore]
         public CharacterWork Work { get; set; }
 
         public static void CreateModel(ModelBuilder modelBuilder)

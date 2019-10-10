@@ -20,6 +20,7 @@ namespace WoT.Server.Services
         ///<summary>users</summary>
         public DbSet<User> Users { get; set; }
         public DbSet<Character> Characters { get; set; }
+        public DbSet<CharacterWork> CharactersWork { get; set; }
 
         private readonly IServiceProvider _services;
 

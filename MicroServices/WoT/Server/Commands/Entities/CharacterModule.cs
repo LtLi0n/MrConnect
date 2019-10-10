@@ -33,7 +33,7 @@ namespace WoT.Server.Commands
             };
             ApplyInput(entity, assign_mandatory: false);
             uint id = await AddEntityAsync(entity);
-            Reply($"Character `{Args[Id]}` has been successfully added.", id);
+            Reply($"Character `{id}` has been successfully added.", id);
         }
 
         [Command("get")]

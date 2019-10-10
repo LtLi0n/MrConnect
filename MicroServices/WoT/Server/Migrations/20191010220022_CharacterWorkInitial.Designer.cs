@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WoT.Server.Services;
 
 namespace WoT.Server.Migrations
 {
     [DbContext(typeof(WoTDbContext))]
-    partial class WoTDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191010220022_CharacterWorkInitial")]
+    partial class CharacterWorkInitial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,6 +82,26 @@ namespace WoT.Server.Migrations
                         .WithMany("Characters")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.OwnsOne("WoT.Shared.Character_Skills", "Skills", b1 =>
+                        {
+                            b1.Property<uint>("CharacterId");
+
+                            b1.Property<ulong>("MiningXp")
+                                .HasColumnName("mining_xp");
+
+                            b1.Property<ulong>("WoodcuttingXp")
+                                .HasColumnName("woodcutting_xp");
+
+                            b1.HasKey("CharacterId");
+
+                            b1.ToTable("characters");
+
+                            b1.HasOne("WoT.Shared.Character")
+                                .WithOne("Skills")
+                                .HasForeignKey("WoT.Shared.Character_Skills", "CharacterId")
+                                .OnDelete(DeleteBehavior.Cascade);
+                        });
                 });
 
             modelBuilder.Entity("WoT.Shared.CharacterWork", b =>
