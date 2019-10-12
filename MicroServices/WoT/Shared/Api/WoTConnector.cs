@@ -17,6 +17,8 @@ namespace WoT.Shared
         protected override void CreateApiControllers(ServiceCollection routes)
         {
             routes.AddSingleton(new UserApi(this));
+            routes.AddSingleton(new CharacterApi(this));
+            routes.AddSingleton(new CharacterWorkApi(this));
         }
     }
 }
