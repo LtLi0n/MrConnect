@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using WoT.Shared;
 using LionLibrary.Utils;
 
-namespace WoT.Server.Services
+namespace WoT.Server
 {
     public class WoTDbContext : DbContext
     {

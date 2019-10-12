@@ -5,7 +5,7 @@ using DataServerHelpers;
 using LionLibrary.Network;
 using WoT.Server.Network;
 
-namespace WoT.Server.Services
+namespace WoT.Server
 {
     public class WoTServer : LionServer<SocketUser, CustomCommandContext>
     {

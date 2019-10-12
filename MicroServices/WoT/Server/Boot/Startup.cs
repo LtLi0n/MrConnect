@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using WoT.Server.Services;
 
 namespace WoT.Server.Boot
 {
@@ -43,6 +42,9 @@ namespace WoT.Server.Boot
                 x => WoTDbContext.UseMySqlOptions(x, config),
                 contextLifetime: ServiceLifetime.Transient);
 
+            sc.AddSingleton<IWoTService, CharacterWorkService>();
+            sc.AddSingleton<UpdateService>();
+
             return sc.BuildServiceProvider();
         }
 
@@ -51,6 +53,7 @@ namespace WoT.Server.Boot
             ILogService logger = _services.GetService<ILogService>();
             logger.Start();
             logger.CursorVisible = false;
+            logger.LogLevel = LogSeverity.Verbose;
 
             await _services.GetService<ICommandService>()
                 .InstallCommandsAsync(Assembly.GetExecutingAssembly(), _services);
@@ -65,6 +68,8 @@ namespace WoT.Server.Boot
 
             //Start server
             _services.GetService<WoTServer>().Start(_services);
+
+            _services.GetService<UpdateService>().Start();
 
             while (true)
             {
