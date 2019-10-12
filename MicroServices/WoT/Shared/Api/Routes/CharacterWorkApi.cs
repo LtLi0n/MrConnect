@@ -27,7 +27,7 @@ namespace WoT.Shared
         public string ModifyRoute => MODIFY;
         public string RemoveRoute => REMOVE;
 
-        public UserApi UserApi => Server.GetController<UserApi>();
+        public CharacterApi CharacterApi => Server.GetController<CharacterApi>();
         public IApiControllerCRUD<CharacterWork, uint> CRUD => this;
 
         public CharacterWorkApi(WoTConnector connector) : base(connector) { }
@@ -39,6 +39,13 @@ namespace WoT.Shared
             pb[CommittedHours] = entity.CommittedHours;
             pb[WorkFinishesAt] = entity.WorkFinishesAt;
             pb[TotalHours] = entity.TotalHours;
+        }
+
+        public async Task<CharacterWork> GetByDiscordIdAsync(ulong discordId)
+        {
+            Character character = await CharacterApi.GetByDiscordIdAsync(discordId);
+            Packet charactersPacket = await CRUD.GetAsync("x => x", $"{CharacterId} == {character.Id}");
+            return charactersPacket.As<IEnumerable<CharacterWork>>().FirstOrDefault();
         }
     }
 }

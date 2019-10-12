@@ -36,5 +36,12 @@ namespace WoT.Shared
             pb[Name] = entity.Name;
             pb[Gold] = entity.Gold;
         }
+
+        public async Task<Character> GetByDiscordIdAsync(ulong discordId)
+        {
+            User user = await UserApi.GetByDiscordIdAsync(discordId);
+            Packet charactersPacket = await CRUD.GetAsync("x => x", $"{UserId} == {user.Id}");
+            return charactersPacket.As<IEnumerable<Character>>().FirstOrDefault();
+        }
     }
 }
