@@ -34,6 +34,7 @@ namespace WoT.Shared
         {
             pb[Id] = entity.Id;
             pb[Name] = entity.Name;
+            pb[Gold] = entity.Gold;
         }
     }
 }

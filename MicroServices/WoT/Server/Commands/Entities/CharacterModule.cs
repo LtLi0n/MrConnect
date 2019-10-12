@@ -1,7 +1,6 @@
 ﻿using LionLibrary.Commands;
 using System.Threading.Tasks;
 using WoT.Shared;
-using WoT.Server.Services;
 using DataServerHelpers;
 
 using static DataServerHelpers.SharedRef;
@@ -19,11 +18,13 @@ namespace WoT.Server.Commands
             if(assign_mandatory)
             {
                 TryFill<string>(Name, x => entity.Name = x);
+                TryFill<ulong>(Gold, x => entity.Gold = x);
             }
         }
 
         [Command("add")]
         [MandatoryArguments(UserId, Name)]
+        [OptionalArguments(Gold)]
         public async Task AddAsync()
         {
             Character entity = new Character
@@ -52,7 +53,7 @@ namespace WoT.Server.Commands
 
         [Command("modify")]
         [MandatoryArguments(Id)]
-        [OptionalArguments(Name)]
+        [OptionalArguments(Name, Gold)]
         public async Task ModifyAsync()
         {
             Character entity = SQL.Characters.Find(GetArgUInt32(Id));

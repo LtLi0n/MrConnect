@@ -18,6 +18,7 @@ namespace WoT.Shared
         {
             public const string UserId = "UserId";
             public const string Name = "Name";
+            public const string Gold = "Gold";
         }
 
         [Key]
@@ -30,6 +31,8 @@ namespace WoT.Shared
 
         [Required, Column(TypeName = "varchar(32)")]
         public string Name { get; set; }
+
+        public ulong Gold { get; set; }
 
         [JsonIgnore]
         public CharacterWork Work { get; set; }
