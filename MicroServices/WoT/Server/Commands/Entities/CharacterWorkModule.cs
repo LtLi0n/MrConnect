@@ -1,7 +1,6 @@
 ﻿using LionLibrary.Commands;
 using System.Threading.Tasks;
 using WoT.Shared;
-using WoT.Server.Services;
 using DataServerHelpers;
 
 using static DataServerHelpers.SharedRef;
@@ -18,14 +17,14 @@ namespace WoT.Server.Commands.Entities
         public void ApplyInput(CharacterWork entity, bool assign_mandatory = true)
         {
             TryFill<bool>(IsWorking, x => entity.IsWorking = x);
-            TryFill<DateTime>(StartedWorkAt, x => entity.StartedWorkAt = x);
+            TryFill<byte>(CommittedHours, x => entity.CommittedHours = x);
             TryFill<DateTime>(WorkFinishesAt, x => entity.WorkFinishesAt = x);
             TryFill<uint>(TotalHours, x => entity.TotalHours = x);
         }
 
         [Command("add")]
         [MandatoryArguments(CharacterId)]
-        [OptionalArguments(IsWorking, StartedWorkAt, WorkFinishesAt, TotalHours)]
+        [OptionalArguments(IsWorking, CommittedHours, WorkFinishesAt, TotalHours)]
         public async Task AddAsync()
         {
             CharacterWork entity = new CharacterWork { CharacterId = GetArgUInt32(CharacterId) };
@@ -43,7 +42,7 @@ namespace WoT.Server.Commands.Entities
 
         [Command("modify")]
         [MandatoryArguments(CharacterId)]
-        [OptionalArguments(IsWorking, StartedWorkAt, WorkFinishesAt, TotalHours)]
+        [OptionalArguments(IsWorking, CommittedHours, WorkFinishesAt, TotalHours)]
         public async Task ModifyAsync()
         {
             CharacterWork entity = SQL.CharactersWork.Find(GetArgUInt32(CharacterId));

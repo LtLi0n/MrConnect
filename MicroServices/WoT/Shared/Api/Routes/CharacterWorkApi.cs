@@ -36,7 +36,7 @@ namespace WoT.Shared
         {
             pb[CharacterId] = entity.CharacterId;
             pb[IsWorking] = entity.IsWorking;
-            pb[StartedWorkAt] = entity.StartedWorkAt;
+            pb[CommittedHours] = entity.CommittedHours;
             pb[WorkFinishesAt] = entity.WorkFinishesAt;
             pb[TotalHours] = entity.TotalHours;
         }
