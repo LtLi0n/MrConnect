@@ -10,6 +10,7 @@ using WoT.Shared;
 using LionLibrary.Network;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
+using LionLibrary.Extensions;
 
 namespace MrConnect.Discord
 {
@@ -18,7 +19,10 @@ namespace MrConnect.Discord
     {
         public AppConfig Config { get; set; }
         public WoTConnector WoT { get; set; }
+
         public UserApi UserApi => WoT.GetController<UserApi>();
+        public CharacterApi CharacterApi => WoT.GetController<CharacterApi>();
+        public CharacterWorkApi CharacterWorkApi => WoT.GetController<CharacterWorkApi>();
 
         [RequireOwner]
         [Command("cmd", RunMode = RunMode.Async)]
@@ -54,6 +58,27 @@ namespace MrConnect.Discord
             }
 
             await ReplyAsync(msg);
+        }
+
+        [Command("work"), Alias("w")]
+        public async Task HandleWorkCommandAsync()
+        {
+            CharacterWork worker = await CharacterWorkApi.GetByDiscordIdAsync(Context.User.Id);
+            if(worker != null)
+            {
+                EmbedBuilder eb = new EmbedBuilder();
+                eb.Color = new Color(255, 255, 0);
+                eb.AddField(x =>
+                {
+                    x.Name = "⛏ Mining Stats ⛏";
+                    x.Value =
+                    $"**Level:** {worker.Level}\n" +
+                    $"**Remaining:** {worker.XpCap - worker.Xp}\n" +
+                    $"**Total:** {worker.TotalHours}";
+                });
+
+                await ReplyAsync(embed: eb.Build());
+            }
         }
 
         [Command("register")]

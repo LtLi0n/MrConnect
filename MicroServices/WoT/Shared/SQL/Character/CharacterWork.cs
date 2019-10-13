@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using LionLibrary.SQL;
 using System.Threading.Tasks;
+using MrConnect.Shared;
 
 namespace WoT.Shared
 {
@@ -131,6 +132,19 @@ namespace WoT.Shared
             IsWorking = false;
             CommittedHours = 0;
         }
+
+        public SharedDiscordEmbedField AsEmbedField(bool isInline = false) =>
+            new SharedDiscordEmbedField
+            {
+                Name = "⛏ Mining Stats ⛏",
+                Value =
+                $"```Ini\n" +
+                $"[Mining Stats]\n" +
+                $"Level = {Level}\n" +
+                $"Progress = ( {Xp} / {XpCap} ) |+| {XpCap - Xp} hours left.\n" +
+                $"Total = {TotalHours}\n```",
+                IsInline = isInline
+            };
 
         public static void CreateModel(ModelBuilder modelBuilder)
         {

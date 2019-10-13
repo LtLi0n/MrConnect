@@ -1,7 +1,7 @@
 ﻿using LionLibrary.Commands;
 using Microsoft.EntityFrameworkCore;
 
-namespace WoT.Server.Commands
+namespace WoT.Server.Network.Commands
 {
     ///<summary>Use it to not forget mandatory methods for back-end data filling.</summary>
     ///<typeparam name="T">Data object.</typeparam>

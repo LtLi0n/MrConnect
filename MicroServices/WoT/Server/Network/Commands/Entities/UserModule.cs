@@ -6,7 +6,7 @@ using DataServerHelpers;
 using static DataServerHelpers.SharedRef;
 using static WoT.Shared.User.Ref;
 
-namespace WoT.Server.Commands.Entities
+namespace WoT.Server.Network.Commands.Entities
 {
     [Module(UserApi.MODULE)]
     public class UserModule : 

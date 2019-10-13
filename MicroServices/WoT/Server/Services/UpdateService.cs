@@ -9,15 +9,15 @@ namespace WoT.Server
     public class UpdateService
     {
         private readonly IServiceProvider _services;
-        private readonly IEnumerable<IWoTService> _wotServices;
+        public CharacterWorkService CharacterWorkService { get; }
 
         private readonly Timer _timer;
         private bool _updating;
 
-        public UpdateService(IServiceProvider services)
+        public UpdateService(IServiceProvider services, CharacterWorkService workService)
         {
             _services = services;
-            _wotServices = services.GetServices<IWoTService>();
+            CharacterWorkService = workService;
 
             _timer = new Timer(2000);
             _timer.Elapsed += _timer_Elapsed;
@@ -28,12 +28,10 @@ namespace WoT.Server
             if (_updating) return;
             else _updating = true;
 
-            List<Task> updates = new List<Task>();
-
-            foreach(IWoTService wotService in _wotServices)
+            List<Task> updates = new List<Task>
             {
-                updates.Add(wotService.UpdateAsync(_services));
-            }
+                CharacterWorkService.UpdateAsync(_services)
+            };
 
             foreach(Task update in updates)
             {

@@ -7,9 +7,9 @@ using WoT.Server.Network;
 
 namespace WoT.Server
 {
-    public class WoTServer : LionServer<SocketUser, CustomCommandContext>
+    public class WoTServerService : LionServer<SocketWoTUser, CustomCommandContext>
     {
-        public WoTServer(IServiceProvider services) : base(services)
+        public WoTServerService(IServiceProvider services) : base(services)
         {
 
         }

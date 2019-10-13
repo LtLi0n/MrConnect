@@ -7,7 +7,7 @@ using static DataServerHelpers.SharedRef;
 using static WoT.Shared.CharacterWork.Ref;
 using System;
 
-namespace WoT.Server.Commands.Entities
+namespace WoT.Server.Network.Commands.Entities
 {
     [Module(CharacterWorkApi.MODULE, ParentModule = typeof(CharacterModule))]
     public class CharacterWorkModule :

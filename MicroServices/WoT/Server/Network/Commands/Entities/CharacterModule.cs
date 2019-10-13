@@ -6,7 +6,7 @@ using DataServerHelpers;
 using static DataServerHelpers.SharedRef;
 using static WoT.Shared.Character.Ref;
 
-namespace WoT.Server.Commands
+namespace WoT.Server.Network.Commands.Entities
 {
     [Module(CharacterApi.MODULE)]
     public class CharacterModule :

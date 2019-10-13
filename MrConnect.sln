@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WoT.Server", "MicroServices
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WoT.Shared", "MicroServices\WoT\Shared\WoT.Shared.csproj", "{0A04F111-B0E3-42AA-ABE9-AC76C63A707B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrConnect.Shared", "MrConnect.Shared\MrConnect.Shared.csproj", "{21AEB5DA-5A1F-4688-96CD-162921C23639}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{0A04F111-B0E3-42AA-ABE9-AC76C63A707B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A04F111-B0E3-42AA-ABE9-AC76C63A707B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A04F111-B0E3-42AA-ABE9-AC76C63A707B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21AEB5DA-5A1F-4688-96CD-162921C23639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21AEB5DA-5A1F-4688-96CD-162921C23639}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21AEB5DA-5A1F-4688-96CD-162921C23639}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21AEB5DA-5A1F-4688-96CD-162921C23639}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

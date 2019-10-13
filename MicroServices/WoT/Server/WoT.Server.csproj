@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\DataServerHelpers\DataServerHelpers.csproj" />
     <ProjectReference Include="..\..\..\LionLibrary\LionLibrary\LionLibrary.csproj" />
+    <ProjectReference Include="..\..\..\MrConnect.Shared\MrConnect.Shared.csproj" />
     <ProjectReference Include="..\Shared\WoT.Shared.csproj" />
   </ItemGroup>
 

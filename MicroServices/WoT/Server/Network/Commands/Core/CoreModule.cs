@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using DataServerHelpers;
 
-namespace WoT.Server.Commands.Core
+namespace WoT.Server.Network.Commands.Core
 {
     [Module("core")]
     public class CoreModule : SocketModuleBase<CustomCommandContext>

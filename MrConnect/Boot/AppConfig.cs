@@ -1,11 +1,9 @@
-﻿using DataServerHelpers;
-using LionLibrary.Network;
-using LionLibrary.Utils;
+﻿using LionLibrary.Utils;
 using WoT.Shared;
 
 namespace MrConnect.Boot
 {
-    public class AppConfig : JsonAppConfigBase, IWoTServiceConnectionConfig
+    public class AppConfig : JsonAppConfigBase, IWoTServiceConnectionConfig, ISslServerConfig, IDataModuleConfig
     {
         public const string PATH_CONFIG = "data/config.json";
 
@@ -22,5 +20,13 @@ namespace MrConnect.Boot
         int LionLibrary.Network.IServiceConnectionConfig.Port => Value<int>("services:wot:port");
         string LionLibrary.Network.IServiceConnectionConfig.CertName => base["services:wot:cert_sn"];
         string LionLibrary.Network.IServiceConnectionConfig.PingRoute => base["services:wot:ping_route"];
+
+        string ISslServerConfig.CertFile => base["server:cert_file"];
+        string ISslServerConfig.CertPassword => base["server:cert_pwd"];
+        string IServerConfig.Host => base["server:host"];
+        int IServerConfig.Port => Value<int>("server:port");
+        public string AuthToken => base["server:auth_token"];
+
+        int IDataModuleConfig.MaxEntriesPerPage { get; } = 500;
     }
 }

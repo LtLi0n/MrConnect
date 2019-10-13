@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using WoT.Shared;
 using LionLibrary.Framework;
+using MrConnect.Shared;
 
 namespace WoT.Server
 {

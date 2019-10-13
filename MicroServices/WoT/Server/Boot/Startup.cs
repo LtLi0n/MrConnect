@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MrConnect.Shared;
 
 namespace WoT.Server.Boot
 {
@@ -27,22 +28,26 @@ namespace WoT.Server.Boot
         {
             ServiceCollection sc = new ServiceCollection();
             sc.RegisterLionLibraryTypes();
-            
+            sc.AddSingleton<MrConnectConnector>();
+            sc.AddSingleton<UserNotificationService>();
+
             AppConfig config = new AppConfig();
             {
                 sc.AddSingleton(config);
+                sc.AddSingleton<IMrConnectServiceConnectionConfig>(config);
                 sc.AddSingleton<IServerConfig>(config);
                 sc.AddSingleton<ISslServerConfig>(config);
                 sc.AddSingleton<IDataModuleConfig>(config);
                 sc.AddSingleton<IConnectionStringConfig>(config);
             }
 
-            sc.AddSingleton<WoTServer>();
+            sc.AddSingleton<WoTServerService>();
             sc.AddDbContext<WoTDbContext>(
                 x => WoTDbContext.UseMySqlOptions(x, config),
                 contextLifetime: ServiceLifetime.Transient);
 
-            sc.AddSingleton<IWoTService, CharacterWorkService>();
+            sc.AddSingleton<CharacterWorkService>();
+
             sc.AddSingleton<UpdateService>();
 
             return sc.BuildServiceProvider();
@@ -58,18 +63,23 @@ namespace WoT.Server.Boot
             await _services.GetService<ICommandService>()
                 .InstallCommandsAsync(Assembly.GetExecutingAssembly(), _services);
 
+            await _services.GetService<MrConnectConnector>().StartAsync();
+
             //Init server
-            _services.GetService<WoTServer>().Init(
-                client => new Network.SocketUser(client),
+            _services.GetService<WoTServerService>().Init(
+                client => new Network.SocketWoTUser(client),
                 (cService, user, packet) => new DataServerHelpers.CustomCommandContext(
-                    _services.GetService<ICommandService>(), 
-                    user, 
+                    _services.GetService<ICommandService>(),
+                    user,
                     packet));
 
             //Start server
-            _services.GetService<WoTServer>().Start(_services);
+            _services.GetService<WoTServerService>().Start(_services);
+
 
             _services.GetService<UpdateService>().Start();
+
+            _services.GetService<UserNotificationService>().Init();
 
             while (true)
             {

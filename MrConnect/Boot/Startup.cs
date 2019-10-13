@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using LionLibrary.Commands;
 using LionLibrary.Framework;
 using LionLibrary.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,7 +39,12 @@ namespace MrConnect.Boot
             {
                 sc.AddSingleton(config);
                 sc.AddSingleton<IWoTServiceConnectionConfig>(config);
+                sc.AddSingleton<IServerConfig>(config);
+                sc.AddSingleton<ISslServerConfig>(config);
+                sc.AddSingleton<IDataModuleConfig>(config);
             }
+
+            sc.AddSingleton<MrConnectServerService>();
 
             return sc.BuildServiceProvider();
         }
@@ -49,6 +55,20 @@ namespace MrConnect.Boot
             logger.Start();
             logger.LogLevel = LogSeverity.Debug;
             logger.CursorVisible = false;
+
+            await _services.GetService<ICommandService>()
+                .InstallCommandsAsync(Assembly.GetExecutingAssembly(), _services);
+
+            //Init server
+            _services.GetService<MrConnectServerService>().Init(
+                client => new Network.SocketMrConnectUser(client),
+                (cService, user, packet) => new DataServerHelpers.CustomCommandContext(
+                    _services.GetService<ICommandService>(),
+                    user,
+                    packet));
+
+            //Start server
+            _services.GetService<MrConnectServerService>().Start(_services);
 
             DiscordService discord = _services.GetService<DiscordService>();
             await discord.InstallCommandsAsync();

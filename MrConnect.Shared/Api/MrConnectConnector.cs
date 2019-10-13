@@ -3,23 +3,19 @@ using LionLibrary.Network;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace WoT.Shared
+namespace MrConnect.Shared
 {
-    public class WoTConnector : ServerConnector, IWoTServiceConnectionConfig
+    public class MrConnectConnector : ServerConnector, IMrConnectServiceConnectionConfig
     {
-        public UserApi Users => base.GetController<UserApi>();
-
-        public WoTConnector(
+        public MrConnectConnector(
             IServiceProvider services,
-            IWoTServiceConnectionConfig config,
+            IMrConnectServiceConnectionConfig config,
             ILogService logger) : base(services, config, logger) { }
 
         protected override void CreateApiControllers(ServiceCollection routes)
         {
             routes.AddSingleton(this);
             routes.AddSingleton<UserApi>();
-            routes.AddSingleton<CharacterApi>();
-            routes.AddSingleton<CharacterWorkApi>();
         }
     }
 }
