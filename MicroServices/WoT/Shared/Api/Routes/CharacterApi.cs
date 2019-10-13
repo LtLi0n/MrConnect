@@ -25,10 +25,13 @@ namespace WoT.Shared
         public string ModifyRoute => MODIFY;
         public string RemoveRoute => REMOVE;
 
-        public UserApi UserApi => Server.GetController<UserApi>();
+        public UserApi UserApi { get; }
         public IApiControllerCRUD<Character, uint> CRUD => this;
 
-        public CharacterApi(WoTConnector connector) : base(connector) { }
+        public CharacterApi(WoTConnector connector, UserApi userApi) : base(connector) 
+        {
+            UserApi = userApi;
+        }
 
         public void FillPacketBucket(PacketBuilder pb, Character entity)
         {
