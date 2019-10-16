@@ -89,7 +89,7 @@ namespace MrConnect.Discord
                     _ => ""
                 };
 
-                if(string.IsNullOrEmpty(x.IconUrl))
+                if (string.IsNullOrEmpty(x.IconUrl))
                 {
                     new_user_state = true;
                 }
@@ -178,7 +178,7 @@ namespace MrConnect.Discord
             eb.Footer = new EmbedFooterBuilder { Text = $"Name:  Id: {showUser.Id}" };
 
             string msg = "";
-            if(new_user_state)
+            if (new_user_state)
             {
                 msg = $"Inform about this. `new UserStatus state needs new icon at {Config.Prefix}user`.";
             }
@@ -257,6 +257,94 @@ namespace MrConnect.Discord
             };
 
             await ReplyAsync(embed: eb.Build());
+        }
+
+        [Group("group"), RequireOwner]
+        public class GroupModule : ModuleBase<SocketCommandContext>
+        {
+            public DiscordService Discord { get; set; }
+
+            [Command("set"), Alias("toggle")]
+            public async Task SetGroupAsync([Remainder] string path)
+            {
+                string[] steps = path.Split(' ');
+                IEnumerable<ModuleInfo> modules = Discord.Commands.Modules
+                    .Where(x => x.Parent == null && !string.IsNullOrEmpty(x.Group));
+
+                for (int i = 0; i < steps.Length; i++)
+                {
+                    string step = steps[i];
+                    ModuleInfo lastModule = null;
+
+                    bool stepWasValid = false;
+
+                    foreach (var module in modules)
+                    {
+                        if (IsValidStep(step, modules))
+                        {
+                            lastModule = module;
+                            stepWasValid = true;
+                            //if there are still more steps to validate.
+                            if(i + 1 < steps.Length)
+                            {
+                                if (lastModule.Submodules.Count > 0)
+                                {
+                                    modules = lastModule.Submodules;
+                                    break;
+                                }
+                                else
+                                {
+                                    await ReplyAsync("Path you were trying to opt into does not exist.");
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    if (!stepWasValid)
+                    {
+                        await ReplyAsync("Path you were trying to opt into does not exist.");
+                        return;
+                    }
+                }
+
+                await ReplyAsync($"You are now within `{path}` group.\n" +
+                    $"You are able to use that group's commands without specifying this path.\n" +
+                    $"If you use a command the group does not contain, the bot will attempt to find a command using default settings.\n" +
+                    $"You can now inspect your current group with `{Discord.Prefix}group inspect`");
+                Discord.AddGroupToggledUser(Context.User, path);
+            }
+
+            [Command("inspect")]
+            public async Task InspectModuleAsync()
+            {
+                if(!Discord.GroupToggledUsers.ContainsKey(Context.User.Id))
+                {
+                    await ReplyAsync(
+                        $"You need to use group pathing for this command.\n" +
+                        $"Set your group with `{Discord.Prefix}group set`");
+                    return;
+                }
+
+                string toReturn = string.Empty;
+                toReturn += $"My Group: {Discord.GroupToggledUsers[Context.User.Id]}";
+                await ReplyAsync(toReturn);
+                //todo
+            }
+
+            private bool IsValidStep(string step, IEnumerable<ModuleInfo> modules)
+            {
+                foreach (var module in modules)
+                {
+                    if (string.IsNullOrEmpty(module.Group)) continue;
+                    if (module.Group.ToLower() == step)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
     }
 }

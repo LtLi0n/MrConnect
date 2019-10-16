@@ -24,40 +24,50 @@ namespace MrConnect.Discord
         public CharacterApi CharacterApi => WoT.GetController<CharacterApi>();
         public CharacterWorkApi CharacterWorkApi => WoT.GetController<CharacterWorkApi>();
 
-        [RequireOwner]
-        [Command("cmd", RunMode = RunMode.Async)]
-        public async Task CmdAsync([Remainder]string query)
+        [Group("owner"), RequireOwner]
+        public class WoTOwnerModule : ModuleBase<SocketCommandContext>
         {
-            string[] inputs = query.Split(' ');
+            public AppConfig Config { get; set; }
+            public WoTConnector WoT { get; set; }
 
-            Packet response = await WoT.DownloadPacketAsync(x =>
+            public UserApi UserApi => WoT.GetController<UserApi>();
+            public CharacterApi CharacterApi => WoT.GetController<CharacterApi>();
+            public CharacterWorkApi CharacterWorkApi => WoT.GetController<CharacterWorkApi>();
+
+            [Command("cmd", RunMode = RunMode.Async)]
+            public async Task CmdAsync([Remainder]string query)
             {
-                x.Header = inputs[0];
+                string[] inputs = query.Split(' ');
 
-                //parse args
-                if (query.TrimEnd().Length > x.Header.Length)
+                Packet response = await WoT.DownloadPacketAsync(x =>
                 {
-                    string arg_str = query.Substring(x.Header.Length);
-                    string regex_str = @$" *([^=]+)=(?(?="")(""([^""]+)"")|([^ ]+))";
-                    MatchCollection arg_matches = Regex.Matches(arg_str, regex_str);
-                    foreach (Match match in arg_matches)
+                    x.Header = inputs[0];
+
+                    //parse args
+                    if (query.TrimEnd().Length > x.Header.Length)
                     {
-                        if (match.Success)
+                        string arg_str = query.Substring(x.Header.Length);
+                        string regex_str = @$" *([^=]+)=(?(?="")(""([^""]+)"")|([^ ]+))";
+                        MatchCollection arg_matches = Regex.Matches(arg_str, regex_str);
+                        foreach (Match match in arg_matches)
                         {
-                            x.Args.Add(match.Groups[1].Value, (match.Groups[2].Success ? match.Groups[2] : match.Groups[3]).Value);
+                            if (match.Success)
+                            {
+                                x.Args.Add(match.Groups[1].Value, (match.Groups[2].Success ? match.Groups[2] : match.Groups[3]).Value);
+                            }
                         }
                     }
+                });
+
+                string msg = response.Content;
+
+                if (response.ContentType == PacketContentType.JSON)
+                {
+                    msg = $"```json\n{JToken.Parse(response.Content).ToString()}```";
                 }
-            });
 
-            string msg = response.Content;
-
-            if(response.ContentType == PacketContentType.JSON)
-            {
-                msg = $"```json\n{JToken.Parse(response.Content).ToString()}```";
+                await ReplyAsync(msg);
             }
-
-            await ReplyAsync(msg);
         }
 
         [Command("work"), Alias("w")]

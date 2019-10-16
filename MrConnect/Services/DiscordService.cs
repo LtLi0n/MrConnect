@@ -5,6 +5,7 @@ using LionLibrary.Framework;
 using LionLibrary.Network;
 using MrConnect.Boot;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -16,16 +17,26 @@ namespace MrConnect.Services
         private readonly ILogService _logger;
         private readonly IServiceProvider _services;
 
+        public string Prefix => _config.Prefix;
+
         public DiscordSocketClient Client { get; }
         public CommandService Commands { get; }
+
+        private readonly Dictionary<ulong, string> _groupToggledUsers = new Dictionary<ulong, string>();
+        public IReadOnlyDictionary<ulong, string> GroupToggledUsers => _groupToggledUsers;
 
         public DiscordService(IServiceProvider services, AppConfig config, ILogService logger)
         {
             _services = services;
             _config = config;
             _logger = logger;
-            Client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = global::Discord.LogSeverity.Verbose });
             Commands = new CommandService();
+            
+            Client = new DiscordSocketClient(
+                new DiscordSocketConfig
+                {
+                    LogLevel = global::Discord.LogSeverity.Verbose
+                });
         }
 
         public async Task InstallCommandsAsync()
@@ -83,23 +94,50 @@ namespace MrConnect.Services
             // Create a WebSocket-based command context based on the message
             var context = new SocketCommandContext(Client, message);
 
-            // Execute the command with the command context we just
-            // created, along with the service provider for precondition checks.
+            bool groupToggleUser = false;
 
-            // Keep in mind that result does not indicate a return value
-            // rather an object stating if the command executed successfully.
-            var result = await Commands.ExecuteAsync(
+            if(_groupToggledUsers.ContainsKey(message.Author.Id))
+            {
+                groupToggleUser = true;
+                string shortcut = _groupToggledUsers[message.Author.Id];
+                string input = shortcut + message.Content.Substring(argPos);
+
+                if(Commands.Search(input).IsSuccess)
+                {
+                    var result = await Commands.ExecuteAsync(
+                        context: context,
+                        input: input,
+                        services: _services);
+
+                    if (!result.IsSuccess)
+                    {
+                        await context.Channel.SendMessageAsync(result.ErrorReason);
+                    }
+
+                    return;
+                }
+            }
+
+            var result_default = await Commands.ExecuteAsync(
                 context: context,
                 argPos: argPos,
                 services: _services);
 
-            // Optionally, we may inform the user if the command fails
-            // to be executed; however, this may not always be desired,
-            // as it may clog up the request queue should a user spam a
-            // command.
-            if (!result.IsSuccess)
+            if (!result_default.IsSuccess)
             {
-                await context.Channel.SendMessageAsync(result.ErrorReason);
+                await context.Channel.SendMessageAsync(result_default.ErrorReason);
+            }
+        }
+
+        public void AddGroupToggledUser(IUser user, string path)
+        {
+            if(_groupToggledUsers.ContainsKey(user.Id))
+            {
+                _groupToggledUsers[user.Id] = path + ' ';
+            }
+            else
+            {
+                _groupToggledUsers.Add(user.Id, path + ' ');
             }
         }
     }
