@@ -30,12 +30,12 @@ namespace MrConnect.Services
             _services = services;
             _config = config;
             _logger = logger;
-            Commands = new CommandService();
+            Commands = new CommandService(new CommandServiceConfig { });
             
             Client = new DiscordSocketClient(
                 new DiscordSocketConfig
                 {
-                    LogLevel = global::Discord.LogSeverity.Verbose
+                    LogLevel = global::Discord.LogSeverity.Debug
                 });
         }
 

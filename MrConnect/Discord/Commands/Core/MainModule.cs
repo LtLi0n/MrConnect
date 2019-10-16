@@ -328,6 +328,9 @@ namespace MrConnect.Discord
 
                 string toReturn = string.Empty;
                 toReturn += $"My Group: {Discord.GroupToggledUsers[Context.User.Id]}";
+
+
+
                 await ReplyAsync(toReturn);
                 //todo
             }
