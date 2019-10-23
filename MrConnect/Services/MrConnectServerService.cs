@@ -1,9 +1,9 @@
 ﻿using LionLibrary.Network;
 using System;
-using MrConnect.Network;
+using MrConnect.Server.Network;
 using DataServerHelpers;
 
-namespace MrConnect
+namespace MrConnect.Server
 {
     public class MrConnectServerService : LionServer<SocketMrConnectUser, CustomCommandContext>
     {

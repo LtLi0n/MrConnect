@@ -1,4 +1,4 @@
-﻿namespace MrConnect
+﻿namespace MrConnect.Server
 {
     public static class StringExtensions
     {

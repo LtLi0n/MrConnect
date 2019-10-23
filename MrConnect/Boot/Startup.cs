@@ -4,7 +4,7 @@ using LionLibrary.Commands;
 using LionLibrary.Framework;
 using LionLibrary.Utils;
 using Microsoft.Extensions.DependencyInjection;
-using MrConnect.Services;
+using MrConnect.Server.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WoT.Shared;
 
-namespace MrConnect.Boot
+namespace MrConnect.Server.Boot
 {
     public class Startup
     {

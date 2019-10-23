@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using MrConnect.Boot;
+using MrConnect.Server.Boot;
 
-namespace MrConnect
+namespace MrConnect.Server
 {
     class Program
     {

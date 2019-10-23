@@ -1,6 +1,6 @@
 ﻿using DataServerHelpers;
 using LionLibrary.Commands;
-using MrConnect.Services;
+using MrConnect.Server.Services;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using MrConnect.Shared;
@@ -9,7 +9,7 @@ using Discord;
 
 using api = MrConnect.Shared.Ref.User;
 
-namespace MrConnect.Network.Commands
+namespace MrConnect.Server.Network.Commands
 {
     [Module("user")]
     public class UserModule : SocketModuleBase<CustomCommandContext>

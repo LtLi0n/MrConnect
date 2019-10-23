@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MrConnect.Network
+namespace MrConnect.Server.Network
 {
     public class SocketMrConnectUser : SocketUserBase, IContextSocketUser
     {

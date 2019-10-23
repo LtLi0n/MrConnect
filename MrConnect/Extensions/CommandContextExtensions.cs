@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Discord.WebSocket;
 
-namespace MrConnect
+namespace MrConnect.Server
 {
     public static class CommandContextExtensions
     {

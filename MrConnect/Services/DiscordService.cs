@@ -3,13 +3,15 @@ using Discord.Commands;
 using Discord.WebSocket;
 using LionLibrary.Framework;
 using LionLibrary.Network;
-using MrConnect.Boot;
+using MrConnect.Server.Boot;
+using MrConnect.Discord.Commands;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
+using static MrConnect.Server.Discord.MainModule;
 
-namespace MrConnect.Services
+namespace MrConnect.Server.Services
 {
     public class DiscordService
     {
@@ -30,7 +32,12 @@ namespace MrConnect.Services
             _services = services;
             _config = config;
             _logger = logger;
-            Commands = new CommandService(new CommandServiceConfig { });
+            
+            Commands = new CommandService(
+                new CommandServiceConfig 
+                { 
+                    LogLevel = global::Discord.LogSeverity.Debug 
+                });
             
             Client = new DiscordSocketClient(
                 new DiscordSocketConfig
@@ -43,7 +50,9 @@ namespace MrConnect.Services
         {
             Client.MessageReceived += HandleCommandAsync;
             Client.Log += Log;
+            Commands.Log += Log;
             await Commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+            //await Commands.AddModuleAsync<GroupModule>(_services);
             _logger?.LogLine(this, "Commands loaded.");
         }
 

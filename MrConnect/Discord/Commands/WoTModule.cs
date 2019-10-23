@@ -1,10 +1,10 @@
-﻿using MrConnect.Boot;
+﻿using MrConnect.Server.Boot;
 using Discord;
 using Discord.Rest;
 using Discord.Commands;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MrConnect.Services;
+using MrConnect.Server.Services;
 using DataServerHelpers;
 using WoT.Shared;
 using LionLibrary.Network;
@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using LionLibrary.Extensions;
 
-namespace MrConnect.Discord
+namespace MrConnect.Server.Discord
 {
     [Group("wot"), RequireOwner]
     public class WoTModule : ModuleBase<SocketCommandContext>

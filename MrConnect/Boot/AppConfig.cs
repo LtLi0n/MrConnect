@@ -1,7 +1,7 @@
 ﻿using LionLibrary.Utils;
 using WoT.Shared;
 
-namespace MrConnect.Boot
+namespace MrConnect.Server.Boot
 {
     public class AppConfig : JsonAppConfigBase, IWoTServiceConnectionConfig, ISslServerConfig, IDataModuleConfig
     {

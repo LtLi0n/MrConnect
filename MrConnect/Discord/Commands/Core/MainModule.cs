@@ -1,10 +1,10 @@
-﻿using MrConnect.Boot;
+﻿using MrConnect.Server.Boot;
 using Discord;
 using Discord.Rest;
 using Discord.Commands;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MrConnect.Services;
+using MrConnect.Server.Services;
 using DataServerHelpers;
 using WoT.Shared;
 using LionLibrary.Network;
@@ -13,7 +13,7 @@ using Discord.WebSocket;
 using System;
 using System.Text;
 
-namespace MrConnect.Discord
+namespace MrConnect.Server.Discord
 {
     public class MainModule : ModuleBase<SocketCommandContext>
     {
@@ -259,7 +259,7 @@ namespace MrConnect.Discord
             await ReplyAsync(embed: eb.Build());
         }
 
-        [Group("group"), RequireOwner]
+        [Group("group"), RequireOwner, DontAutoLoad]
         public class GroupModule : ModuleBase<SocketCommandContext>
         {
             public DiscordService Discord { get; set; }
