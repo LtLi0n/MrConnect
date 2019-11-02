@@ -36,6 +36,8 @@ namespace WoT.Shared
         public void FillPacketBucket(PacketBuilder pb, Character entity)
         {
             pb[Id] = entity.Id;
+            pb[UserId] = entity.UserId;
+            pb[ZoneNodeId] = entity.ZoneNodeId;
             pb[Name] = entity.Name;
             pb[Gold] = entity.Gold;
         }

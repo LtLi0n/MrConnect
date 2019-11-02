@@ -17,6 +17,7 @@ namespace WoT.Shared
         public static class Ref
         {
             public const string UserId = "UserId";
+            public const string ZoneNodeId = "ZoneNodeId";
             public const string Name = "Name";
             public const string Gold = "Gold";
         }
@@ -28,6 +29,11 @@ namespace WoT.Shared
         public uint UserId { get; set; }
         [JsonIgnore, IgnoreDataMember]
         public User User { get; set; }
+
+        [Required]
+        public uint ZoneNodeId { get; set; }
+        [JsonIgnore, IgnoreDataMember]
+        public ZoneNode ZoneNode { get; set; }
 
         [Required, Column(TypeName = "varchar(32)")]
         public string Name { get; set; }

@@ -25,7 +25,7 @@ namespace MrConnect.Discord.Commands
         public CharacterApi CharacterApi => WoT.GetController<CharacterApi>();
         public CharacterWorkApi CharacterWorkApi => WoT.GetController<CharacterWorkApi>();
 
-        [Command("cmd", RunMode = RunMode.Async)]
+        [Command(RunMode = RunMode.Async)]
         public async Task CmdAsync([Remainder]string query)
         {
             string[] inputs = query.Split(' ');

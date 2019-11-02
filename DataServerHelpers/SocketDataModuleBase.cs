@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using LionLibrary.Utils;
+using LionLibrary.Commands;
 
 namespace DataServerHelpers
 {
@@ -126,76 +127,6 @@ namespace DataServerHelpers
             return entity;
         }
 
-        ///<summary>Use this for most of the data entity modify cases.</summary>
-        ///<typeparam name="EntityT">Entity type.</typeparam>
-        ///<typeparam name="PKType">Entity primary key type.</typeparam>
-        ///<param name="db_set">Database set to obtain the remove candidate from.</param>
-        ///<param name="ownerPerm">Permission check if the user IS the owner of the entity. Should check if they have create permissions.</param>
-        ///<param name="nonOwnerPerm">Permission check if the user IS NOT the owner of the entity. Should check if they have modify permissions.</param>
-        ///<param name="successReply">Text to send the user on successful removal operation.</param>
-        ///<param name="entityMissingReply">Text to send the user if the entity cannot be removed because it does not exist.</param>
-        public async Task<bool> WrapperModifyEntityAsync<EntityT, PKType>(
-            DbSet<EntityT> db_set,
-            Action<EntityT> apply_input,
-            string successReply,
-            string entityMissingReply)
-            where EntityT : class, IEntity<EntityT, PKType>
-            where PKType : struct, IComparable, IComparable<PKType>, IConvertible, IEquatable<PKType>, IFormattable
-        {
-            //primary key value
-            PKType key = default;
-            TryFill<PKType>("id", x => key = x);
-
-            EntityT entity = db_set.Find(key);
-
-            if (entity != null)
-            {
-                apply_input(entity);
-                await UpdateEntityAsync(entity);
-                Reply(successReply);
-                return true;
-            }
-            else
-            {
-                ReplyError(entityMissingReply);
-                return false;
-            }
-        }
-
-        ///<summary>Use this for most of the data entity removal cases.</summary>
-        ///<typeparam name="EntityT">Entity type.</typeparam>
-        ///<typeparam name="PKType">Entity primary key type.</typeparam>
-        ///<param name="db_set">Database set to obtain the remove candidate from.</param>
-        ///<param name="ownerPerm">Permission check if the user IS the owner of the entity. Should check if they have create permissions.</param>
-        ///<param name="nonOwnerPerm">Permission check if the user IS NOT the owner of the entity. Should check if they have modify permissions.</param>
-        ///<param name="successReply">Text to send the user on successful removal operation.</param>
-        ///<param name="entityMissingReply">Text to send the user if the entity cannot be removed because it does not exist.</param>
-        public async Task<bool> WrapperRemoveEntityAsync<EntityT, PKType>(
-            DbSet<EntityT> db_set,
-            string successReply,
-            string entityMissingReply)
-            where EntityT : class, IEntity<EntityT, PKType>
-            where PKType : struct, IComparable, IComparable<PKType>, IConvertible, IEquatable<PKType>, IFormattable
-        {
-            //primary key value
-            PKType key = default;
-            TryFill<PKType>("id", x => key = x);
-
-            EntityT entity = db_set.Find(key);
-
-            if (entity != null)
-            {
-                await RemoveEntityAsync(entity);
-                Reply(successReply);
-                return true;
-            }
-            else
-            {
-                ReplyError(entityMissingReply);
-                return false;
-            }
-        }
-
         #region ReplyCreate
         public void ReplyCreateSuccess<EntityT, PKType>(IEntity<EntityT, PKType> entity)
             where EntityT : class =>
@@ -210,7 +141,7 @@ namespace DataServerHelpers
             where EntityT : class =>
             Reply($"[{CreateIdentityString<EntityT>(new object[] { entity.Id })}] successfully modified.");
 
-        public void ReplyModifySuccess<EntityT>(object[] keys)
+        public void ReplyModifySuccess<EntityT>(IEnumerable<object> keys)
             where EntityT : class =>
             Reply($"[{CreateIdentityString<EntityT>(keys)}] successfully modified.");
         #endregion
@@ -225,9 +156,9 @@ namespace DataServerHelpers
         #endregion
 
         #region ReplyEntityNotFound
-        public void ReplyEntityNotFound<EntityT, EntityKey>(EntityKey key)
-            where EntityT : class =>
-            ReplyError($"[{CreateIdentityString<EntityT>(new object[] { key })}] not found.");
+        public void ReplyEntityNotFound<EntityT, PkType>(IEntity<EntityT, PkType> entity)
+            where EntityT : class, IEntity<EntityT, PkType> =>
+            ReplyError($"[{CreateIdentityString<EntityT>(new object[] { entity.Id })}] not found.");
 
         public void ReplyEntityNotFound<EntityT>(object key)
             where EntityT : class =>

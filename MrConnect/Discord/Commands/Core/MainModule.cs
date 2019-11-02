@@ -30,6 +30,7 @@ namespace MrConnect.Server.Discord
         public async Task SayAsync([Remainder]string text)
         {
             await Context.Message.DeleteAsync();
+
             await ReplyAsync(text);
         }
 

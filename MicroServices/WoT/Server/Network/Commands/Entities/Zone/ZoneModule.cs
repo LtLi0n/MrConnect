@@ -4,37 +4,39 @@ using WoT.Shared;
 using DataServerHelpers;
 
 using static DataServerHelpers.SharedRef;
-using static WoT.Shared.Character.Ref;
+using static WoT.Shared.Zone.Ref;
 
 namespace WoT.Server.Network.Commands.Entities
 {
-    [Module(CharacterApi.MODULE)]
-    public class CharacterModule :
+    [Module("zones")]
+    public class ZoneModule : 
         SocketDataModuleBase<CustomCommandContext, WoTDbContext>,
-        IWoTDbModule<Character>
+        IWoTDbModule<Zone>
     {
-        public void ApplyInput(Character entity, bool assign_mandatory = true)
+        public void ApplyInput(Zone entity, bool assign_mandatory = true)
         {
-            if(assign_mandatory)
+            if (assign_mandatory)
             {
+                TryFill<string>(CodeName, x => entity.CodeName = x);
                 TryFill<string>(Name, x => entity.Name = x);
-                TryFill<ulong>(Gold, x => entity.Gold = x);
             }
+
+            TryFill<string>(Description, x => entity.Description = x);
         }
 
         [Command("add")]
-        [MandatoryArguments(UserId, Name)]
-        [OptionalArguments(Gold)]
+        [MandatoryArguments(CodeName, Name)]
+        [OptionalArguments(Description)]
         public async Task AddAsync()
         {
-            Character entity = new Character
+            Zone entity = new Zone
             {
-                UserId = GetArgUInt32(UserId),
+                CodeName = Args[CodeName],
                 Name = Args[Name]
             };
             ApplyInput(entity, assign_mandatory: false);
             uint id = await AddEntityAsync(entity);
-            Reply($"Character `{id}` has been successfully added.", id);
+            Reply($"Zone `{id}` has been successfully added.", id);
         }
 
         [Command("get")]
@@ -43,39 +45,34 @@ namespace WoT.Server.Network.Commands.Entities
         {
             if (HasArg(Id)) //Id
             {
-                ReplyEntries(SQL.Characters, ParseIdsUInt32(Args[Id]));
+                ReplyEntries(SQL.Set<Zone>(), ParseIdsUInt32(Args[Id]));
             }
             else
             {
-                ReplyEntries(SQL.Characters);
+                ReplyEntries(SQL.Set<Zone>());
             }
         }
 
         [Command("modify")]
         [MandatoryArguments(Id)]
-        [OptionalArguments(Name, Gold)]
+        [OptionalArguments(CodeName, Name, Description)]
         public async Task ModifyAsync()
         {
-            Character entity = SQL.Characters.Find(GetArgUInt32(Id));
+            Zone entity = SQL.Set<Zone>().Find(GetArgUInt32(Id));
             if (entity != null)
             {
                 ApplyInput(entity);
                 await UpdateEntityAsync(entity);
-                Reply($"Character `{Args[Id]}` has been modified successfully.");
+                Reply($"Zone `{Args[Id]}` has been modified successfully.");
             }
             else
             {
-                ReplyError("Character db id invalid. 404 not found.");
+                ReplyError("Zone db id invalid. 404 not found.");
             }
         }
 
         [Command("remove")]
         [MandatoryArguments(Id)]
-        public async Task RemoveAsync()
-        {
-            Character entity = SQL.Characters.Find(GetArgUInt32(Id));
-            await RemoveEntityAsync(entity);
-            Reply($"Character `{Args[Id]}` has been successfully removed.");
-        }
+        public async Task RemoveAsync() => await WrapperRemoveEntityAsync<Zone, uint>();
     }
 }
