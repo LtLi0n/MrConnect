@@ -195,5 +195,51 @@ namespace DataServerHelpers
                 return false;
             }
         }
+
+        #region ReplyCreate
+        public void ReplyCreateSuccess<EntityT, PKType>(IEntity<EntityT, PKType> entity)
+            where EntityT : class =>
+            Reply($"[{CreateIdentityString<EntityT>(new object[] { entity.Id })}] successfully added.");
+
+        public void ReplyCreateSuccess<EntityT>(params object[] keys)
+            where EntityT : class =>
+            Reply($"[{CreateIdentityString<EntityT>(keys)}] successfully added.");
+        #endregion
+        #region ReplyModify
+        public void ReplyModifySuccess<EntityT, PKType>(IEntity<EntityT, PKType> entity)
+            where EntityT : class =>
+            Reply($"[{CreateIdentityString<EntityT>(new object[] { entity.Id })}] successfully modified.");
+
+        public void ReplyModifySuccess<EntityT>(object[] keys)
+            where EntityT : class =>
+            Reply($"[{CreateIdentityString<EntityT>(keys)}] successfully modified.");
+        #endregion
+        #region ReplyRemove
+        public void ReplyRemoveSuccess<EntityT, EntityKey>(IEntity<EntityT, EntityKey> entity)
+            where EntityT : class =>
+            Reply($"[{CreateIdentityString<EntityT>(new object[] { entity.Id })}] successfully removed.");
+
+        public void ReplyRemoveSuccess<EntityT>(object[] keys)
+            where EntityT : class =>
+            Reply($"[{CreateIdentityString<EntityT>(keys)}] successfully removed.");
+        #endregion
+
+        #region ReplyEntityNotFound
+        public void ReplyEntityNotFound<EntityT, EntityKey>(EntityKey key)
+            where EntityT : class =>
+            ReplyError($"[{CreateIdentityString<EntityT>(new object[] { key })}] not found.");
+
+        public void ReplyEntityNotFound<EntityT>(object key)
+            where EntityT : class =>
+            ReplyError($"[{CreateIdentityString<EntityT>(new object[] { key })}] not found.");
+
+        public void ReplyEntityNotFound<EntityT>(IEnumerable<object> keys)
+            where EntityT : class =>
+            ReplyError($"[{CreateIdentityString<EntityT>(keys)}] not found.");
+        #endregion
+
+        private string CreateIdentityString<EntityT>(IEnumerable<object> keys)
+            where EntityT : class =>
+            $"{SQL.GetTableName<EntityT>()}:{string.Join(':', keys)}";
     }
 }
