@@ -176,7 +176,7 @@ namespace DataServerHelpers
         }
 
         public async Task<bool> WrapperModifyEntityAsync<EntityT, PkType>(string idTag = SharedRef.Id)
-            where EntityT : class, IEntity<EntityT, PkType>
+            where EntityT : class, IEntityBase<EntityT>
         {
             if (this is IDataModule<EntityT> dataModule)
             {
@@ -192,7 +192,7 @@ namespace DataServerHelpers
                     //await ValidateModifyRequestAsync(entity);
                     dataModule.ApplyInput(entity);
                     await UpdateEntityAsync(entity);
-                    ReplyModifySuccess(entity);
+                    ReplyModifySuccess<EntityT, PkType>(key);
                     return true;
                 }
                 else
@@ -207,38 +207,37 @@ namespace DataServerHelpers
             }
         }
 
-        public async Task<bool> WrapperModifyEntityAsync<EntityT>(params object[] keys)
+        public async Task<bool> WrapperModifyEntityAsync<EntityT, PkType>(PkType key)
             where EntityT : class, IEntityBase<EntityT>
         {
             if (this is IDataModule<EntityT> dataModule)
             {
                 //await ValidateCallerAsync();
 
-                EntityT entity = SQL.Set<EntityT>().Find(keys);
+                EntityT entity = SQL.Set<EntityT>().Find(key);
 
                 if (entity != null)
                 {
                     //await ValidateModifyRequestAsync(entity);
                     dataModule.ApplyInput(entity);
                     await UpdateEntityAsync(entity);
-                    ReplyModifySuccess<EntityT>(keys);
+                    ReplyModifySuccess<EntityT, PkType>(key);
                     return true;
                 }
                 else
                 {
-                    ReplyEntityNotFound<EntityT>(keys);
+                    ReplyEntityNotFound<EntityT, PkType>(key);
                     return false;
                 }
             }
             else
             {
-                throw new Exception("");
+                throw new Exception($"Module must inherit from IDataModule<{typeof(EntityT).FullName}>.");
             }
         }
 
-
         public async Task<bool> WrapperRemoveEntityAsync<EntityT, PKType>(string idTag = SharedRef.Id)
-            where EntityT : class, IEntity<EntityT, PKType>
+            where EntityT : class, IEntityBase<EntityT>
         {
             //await ValidateCallerAsync();
 
@@ -252,33 +251,12 @@ namespace DataServerHelpers
             {
                 //await ValidatePermissionAsync<EntityT>(entity.PridėjoId == Context.User.Id ? Permission.Create : Permission.Manage);
                 await RemoveEntityAsync(entity);
-                ReplyRemoveSuccess(entity);
+                ReplyRemoveSuccess<EntityT, PKType>(key);
                 return true;
             }
             else
             {
                 ReplyEntityNotFound<EntityT, PKType>(key);
-                return false;
-            }
-        }
-
-        public async Task<bool> WrapperRemoveEntityAsync<EntityT>(params object[] keys)
-            where EntityT : class, IEntityBase<EntityT>
-        {
-            //await ValidateCallerAsync();
-
-            EntityT entity = SQL.Set<EntityT>().Find(keys);
-
-            if (entity != null)
-            {
-                //await ValidatePermissionAsync<EntityT>(entity.PridėjoId == Context.User.Id ? Permission.Create : Permission.Manage);
-                await RemoveEntityAsync(entity);
-                ReplyRemoveSuccess<EntityT>(keys);
-                return true;
-            }
-            else
-            {
-                ReplyEntityNotFound<EntityT>(keys);
                 return false;
             }
         }
@@ -295,9 +273,13 @@ namespace DataServerHelpers
             Reply($"[{CreateIdentityString<EntityT>(keys)}] successfully added.");
         #endregion
         #region ReplyModify
-        public void ReplyModifySuccess<EntityT, PKType>(IEntity<EntityT, PKType> entity)
+        public void ReplyModifySuccess<EntityT, PkType>(IEntity<EntityT, PkType> entity)
             where EntityT : class =>
             Reply($"[{CreateIdentityString<EntityT>(new object[] { entity.Id })}] successfully modified.");
+
+        public void ReplyModifySuccess<EntityT, PkType>(PkType key)
+            where EntityT : class =>
+            Reply($"[{CreateIdentityString<EntityT>(new object[] { key })}] successfully modified.");
 
         public void ReplyModifySuccess<EntityT>(IEnumerable<object> keys)
             where EntityT : class =>
@@ -308,6 +290,10 @@ namespace DataServerHelpers
             where EntityT : class =>
             Reply($"[{CreateIdentityString<EntityT>(new object[] { entity.Id })}] successfully removed.");
 
+        public void ReplyRemoveSuccess<EntityT, PkType>(PkType key)
+            where EntityT : class =>
+            Reply($"[{CreateIdentityString<EntityT>(new object[] { key })}] successfully removed.");
+
         public void ReplyRemoveSuccess<EntityT>(object[] keys)
             where EntityT : class =>
             Reply($"[{CreateIdentityString<EntityT>(keys)}] successfully removed.");
@@ -315,7 +301,7 @@ namespace DataServerHelpers
 
         #region ReplyEntityNotFound
         public void ReplyEntityNotFound<EntityT, PkType>(PkType key)
-            where EntityT : class, IEntity<EntityT, PkType> =>
+            where EntityT : class, IEntityBase<EntityT> =>
             ReplyError($"[{CreateIdentityString<EntityT>(new object[] { key })}] not found.");
 
         public void ReplyEntityNotFound<EntityT>(IEnumerable<object> keys)
