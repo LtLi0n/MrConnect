@@ -15,7 +15,6 @@ namespace Discord.Shared
     {
         public static class Ref
         {
-            public const string DiscordId = "DiscordId";
             public const string Username = "Username";
             public const string Discriminator = "Discriminator";
         }
@@ -23,18 +22,14 @@ namespace Discord.Shared
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public ulong Id { get; set; }
 
-        [NotMapped]
-        public ulong DiscordId { get => Id; set => Id = value; }
-
-        [Column(TypeName = "nvarchar(255)")]
+        [Required, Column(TypeName = "nvarchar(255)")]
         public string Username { get; set; }
 
-        [Column(TypeName = "varchar(4)")]
+        [Required, Column(TypeName = "varchar(4)")]
         public string Discriminator { get; set; }
 
-        public DateTime LastUpdatedAt { get; set; }
+        public DateTime LastUpdatedAt { get; set; } = DateTime.Now;
         public DateTime AddedAt { get; set; } = DateTime.Now;
-
 
         ///<summary>Vsauce - You want some spit facts?</summary>
         [JsonIgnore, IgnoreDataMember]
@@ -42,6 +37,9 @@ namespace Discord.Shared
 
         [JsonIgnore, IgnoreDataMember]
         public ICollection<FactSuggestion> FactSuggestions { get; set; }
+
+        [JsonIgnore, IgnoreDataMember]
+        public ICollection<Guild> OwnedGuilds { get; set; }
 
         public static void CreateModel(ModelBuilder modelBuilder)
         {
@@ -54,6 +52,10 @@ namespace Discord.Shared
                 x.HasMany(user => user.FactSuggestions)
                 .WithOne(factSug => factSug.User)
                 .HasForeignKey(factSug => factSug.UserId);
+
+                x.HasMany(user => user.OwnedGuilds)
+                .WithOne(guild => guild.Owner)
+                .HasForeignKey(guild => guild.OwnerId);
             });
         }
     }

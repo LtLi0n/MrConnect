@@ -1,25 +1,35 @@
 ﻿using LionLibrary.Commands;
 using LionLibrary.SQL;
-using LionLibrary.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DataServerHelpers
 {
     public static class SocketDataModuleBaseExtensions
     {
-        public static async Task WrapperGetEntitiesAsync<EntityT>(
-            this SocketDataModuleBase<CustomCommandContext, DbContext> module)
-            where EntityT : class, IEntityBase<EntityT>
+        public static async Task WrapperAddEntityAsync<EntityT, PkType>(
+            this SocketDataModuleBase<CustomCommandContext, DbContext> module,
+            Func<EntityT> createFunc,
+            bool asignMandatoryThroughApplyInput = false)
+            where EntityT : class, IEntity<EntityT, PkType>
         {
             //await ValidateCallerAsync();
-            //await ValidatePermissionAsync<EntityT>(Permission.Read);
+            //await ValidatePermissionAsync<Paslauga>(Permission.Create);
 
-            module.ReplyEntries(module.SQL.Set<EntityT>());
+            if(module is IDataModule<EntityT> dataModule)
+            {
+                EntityT entity = createFunc();
+                dataModule.ApplyInput(entity, asignMandatoryThroughApplyInput);
+                await module.AddEntityAsync(entity);
+                module.ReplyCreateSuccess(entity);
+            }
+            else
+            {
+                throw new Exception($"Module must inherit from IDataModule<{typeof(EntityT).FullName}>.");
+            }
         }
 
         public static async Task WrapperGetEntitiesAsync<EntityT>(
@@ -38,6 +48,16 @@ namespace DataServerHelpers
             {
                 module.ReplyFullEntries(module.SQL.Set<EntityT>().Select(defaultSelector));
             }
+        }
+
+        public static async Task WrapperGetEntitiesAsync<EntityT>(
+            this SocketDataModuleBase<CustomCommandContext, DbContext> module)
+            where EntityT : class, IEntityBase<EntityT>
+        {
+            //await ValidateCallerAsync();
+            //await ValidatePermissionAsync<EntityT>(Permission.Read);
+
+            module.ReplyEntries(module.SQL.Set<EntityT>());
         }
 
         public static async Task<bool> WrapperModifyEntityAsync<EntityT, PkType>(
@@ -64,13 +84,13 @@ namespace DataServerHelpers
                 }
                 else
                 {
-                    module.ReplyEntityNotFound<EntityT>(key);
+                    module.ReplyEntityNotFound<EntityT, PkType>(key);
                     return false;
                 }
             }
             else
             {
-                throw new Exception("");
+                throw new Exception($"Module must inherit from IDataModule<{typeof(EntityT).FullName}>.");
             }
         }
 

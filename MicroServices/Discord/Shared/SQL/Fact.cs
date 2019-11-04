@@ -11,7 +11,7 @@ using System.Text;
 namespace Discord.Shared
 {
     [Table("facts")]
-    public class Fact : IDiscordEntity<Fact, uint>
+    public class Fact : IEntity<Fact, uint>
     {
         public static class Ref
         {
@@ -30,7 +30,6 @@ namespace Discord.Shared
         [Required]
         public string Content { get; set; }
 
-        public DateTime LastUpdatedAt { get; set; }
         public DateTime AddedAt { get; set; } = DateTime.Now;
 
         public static void CreateModel(ModelBuilder modelBuilder)

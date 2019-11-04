@@ -156,12 +156,8 @@ namespace DataServerHelpers
         #endregion
 
         #region ReplyEntityNotFound
-        public void ReplyEntityNotFound<EntityT, PkType>(IEntity<EntityT, PkType> entity)
+        public void ReplyEntityNotFound<EntityT, PkType>(PkType key)
             where EntityT : class, IEntity<EntityT, PkType> =>
-            ReplyError($"[{CreateIdentityString<EntityT>(new object[] { entity.Id })}] not found.");
-
-        public void ReplyEntityNotFound<EntityT>(object key)
-            where EntityT : class =>
             ReplyError($"[{CreateIdentityString<EntityT>(new object[] { key })}] not found.");
 
         public void ReplyEntityNotFound<EntityT>(IEnumerable<object> keys)
