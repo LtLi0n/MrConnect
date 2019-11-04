@@ -127,6 +127,164 @@ namespace DataServerHelpers
             return entity;
         }
 
+        #region Wrappers
+
+        public async Task WrapperAddEntityAsync<EntityT, PkType>(
+            Func<EntityT> createFunc,
+            bool asignMandatoryThroughApplyInput = false)
+            where EntityT : class, IEntity<EntityT, PkType>
+        {
+            //await ValidateCallerAsync();
+            //await ValidatePermissionAsync<Paslauga>(Permission.Create);
+
+            if (this is IDataModule<EntityT> dataModule)
+            {
+                EntityT entity = createFunc();
+                dataModule.ApplyInput(entity, asignMandatoryThroughApplyInput);
+                await AddEntityAsync(entity);
+                ReplyCreateSuccess(entity);
+            }
+            else
+            {
+                throw new Exception($"Module must inherit from IDataModule<{typeof(EntityT).FullName}>.");
+            }
+        }
+
+        public async Task WrapperGetEntitiesAsync<EntityT>(Expression<Func<EntityT, object>> defaultSelector)
+            where EntityT : class, IEntityBase<EntityT>
+        {
+            //await ValidateCallerAsync();
+            //await ValidatePermissionAsync<EntityT>(Permission.Read);
+
+            if (HasArg(SharedRef.Where) || HasArg(SharedRef.Select))
+            {
+                await WrapperGetEntitiesAsync<EntityT>();
+            }
+            else
+            {
+                ReplyFullEntries(SQL.Set<EntityT>().Select(defaultSelector));
+            }
+        }
+
+        public async Task WrapperGetEntitiesAsync<EntityT>()
+            where EntityT : class, IEntityBase<EntityT>
+        {
+            //await ValidateCallerAsync();
+            //await ValidatePermissionAsync<EntityT>(Permission.Read);
+
+            ReplyEntries(SQL.Set<EntityT>());
+        }
+
+        public async Task<bool> WrapperModifyEntityAsync<EntityT, PkType>(string idTag = SharedRef.Id)
+            where EntityT : class, IEntity<EntityT, PkType>
+        {
+            if (this is IDataModule<EntityT> dataModule)
+            {
+                //await ValidateCallerAsync();
+
+                PkType key = default;
+                TryFill<PkType>(idTag, x => key = x);
+
+                EntityT entity = SQL.Set<EntityT>().Find(key);
+
+                if (entity != null)
+                {
+                    //await ValidateModifyRequestAsync(entity);
+                    dataModule.ApplyInput(entity);
+                    await UpdateEntityAsync(entity);
+                    ReplyModifySuccess(entity);
+                    return true;
+                }
+                else
+                {
+                    ReplyEntityNotFound<EntityT, PkType>(key);
+                    return false;
+                }
+            }
+            else
+            {
+                throw new Exception($"Module must inherit from IDataModule<{typeof(EntityT).FullName}>.");
+            }
+        }
+
+        public async Task<bool> WrapperModifyEntityAsync<EntityT>(params object[] keys)
+            where EntityT : class, IEntityBase<EntityT>
+        {
+            if (this is IDataModule<EntityT> dataModule)
+            {
+                //await ValidateCallerAsync();
+
+                EntityT entity = SQL.Set<EntityT>().Find(keys);
+
+                if (entity != null)
+                {
+                    //await ValidateModifyRequestAsync(entity);
+                    dataModule.ApplyInput(entity);
+                    await UpdateEntityAsync(entity);
+                    ReplyModifySuccess<EntityT>(keys);
+                    return true;
+                }
+                else
+                {
+                    ReplyEntityNotFound<EntityT>(keys);
+                    return false;
+                }
+            }
+            else
+            {
+                throw new Exception("");
+            }
+        }
+
+
+        public async Task<bool> WrapperRemoveEntityAsync<EntityT, PKType>(string idTag = SharedRef.Id)
+            where EntityT : class, IEntity<EntityT, PKType>
+        {
+            //await ValidateCallerAsync();
+
+            //primary key value
+            PKType key = default;
+            TryFill<PKType>(idTag, x => key = x);
+
+            EntityT entity = SQL.Set<EntityT>().Find(key);
+
+            if (entity != null)
+            {
+                //await ValidatePermissionAsync<EntityT>(entity.PridėjoId == Context.User.Id ? Permission.Create : Permission.Manage);
+                await RemoveEntityAsync(entity);
+                ReplyRemoveSuccess(entity);
+                return true;
+            }
+            else
+            {
+                ReplyEntityNotFound<EntityT, PKType>(key);
+                return false;
+            }
+        }
+
+        public async Task<bool> WrapperRemoveEntityAsync<EntityT>(params object[] keys)
+            where EntityT : class, IEntityBase<EntityT>
+        {
+            //await ValidateCallerAsync();
+
+            EntityT entity = SQL.Set<EntityT>().Find(keys);
+
+            if (entity != null)
+            {
+                //await ValidatePermissionAsync<EntityT>(entity.PridėjoId == Context.User.Id ? Permission.Create : Permission.Manage);
+                await RemoveEntityAsync(entity);
+                ReplyRemoveSuccess<EntityT>(keys);
+                return true;
+            }
+            else
+            {
+                ReplyEntityNotFound<EntityT>(keys);
+                return false;
+            }
+        }
+
+        #endregion
+
         #region ReplyCreate
         public void ReplyCreateSuccess<EntityT, PKType>(IEntity<EntityT, PKType> entity)
             where EntityT : class =>
