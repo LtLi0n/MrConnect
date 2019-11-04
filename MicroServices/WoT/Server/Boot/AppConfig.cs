@@ -2,9 +2,13 @@
 using Microsoft.Extensions.Configuration;
 using MrConnect.Shared;
 
-namespace WoT.Server.Boot
+namespace WoT.Server
 {
-    public class AppConfig : JsonAppConfigBase, IMrConnectServiceConnectionConfig, ISslServerConfig, IDataModuleConfig, IConnectionStringConfig
+    public class AppConfig : 
+        JsonAppConfigBase,
+        ISslServerConfig, 
+        IDataModuleConfig, 
+        IConnectionStringConfig
     {
         public const string PATH_CONFIG = "data/config.json";
 
@@ -22,14 +26,17 @@ namespace WoT.Server.Boot
         string IConnectionStringConfig.User => base["mysql:databases:wot:user"];
         string IConnectionStringConfig.Password => base["mysql:databases:wot:password"];
 
-        string LionLibrary.Network.IServiceConnectionConfig.ServerName => "MrConnect";
-        string LionLibrary.Network.IServiceConnectionConfig.Host => base["services:mr_connect:host"];
-        int LionLibrary.Network.IServiceConnectionConfig.Port => Value<int>("services:mr_connect:port");
-        string LionLibrary.Network.IServiceConnectionConfig.CertName => base["services:mr_connect:cert_sn"];
-        string LionLibrary.Network.IServiceConnectionConfig.PingRoute => base["services:mr_connect:ping_route"];
+        public MrConnectServiceConnectionConfig MrConnectServiceConnectionConfig { get; }
 
         public AppConfig() : base(PATH_CONFIG)
         {
+            MrConnectServiceConnectionConfig = new MrConnectServiceConnectionConfig(
+                this,
+                serverNamePath: "MrConnect",
+                hostPath: "services:mr_connect:host",
+                portPath: "services:mr_connect:port",
+                certNamePath: "services:mr_connect:cert_sn",
+                pingPath: "services:mr_connect:ping_route");
         }
     }
 }

@@ -9,7 +9,7 @@ using static WoT.Shared.User.Ref;
 namespace WoT.Server.Network.Commands.Entities
 {
     [Module(UserApi.MODULE)]
-    public class UserModule : 
+    public class UserModule :
         SocketDataModuleBase<CustomCommandContext, WoTDbContext>,
         IWoTDbModule<User>
     {
@@ -23,57 +23,21 @@ namespace WoT.Server.Network.Commands.Entities
         [Command("add")]
         [MandatoryArguments(DiscordId)]
         [OptionalArguments(IsPremium, Settings)]
-        public async Task AddAsync()
-        {
-            User entity = new User();
-            ApplyInput(entity);
-            uint id = await AddEntityAsync(entity);
-            Reply($"User `{entity.DiscordId}` has been successfully added.", id);
-        }
+        public async Task AddAsync() => 
+            await WrapperAddEntityAsync<User, uint>(
+            () => new User { DiscordId = GetArgUInt64(DiscordId) });
 
         [Command("get")]
         [OptionalArguments(Id)]
-        public async Task GetAsync()
-        {
-            //ValidateCallerAsync
-            //ValidateSqlAsync Read
-
-            if (HasArg(Id)) //Id
-            {
-                ReplyEntries(SQL.Users, ParseIdsUInt32(Args[Id]));
-            }
-            else
-            {
-                ReplyEntries(SQL.Users);
-            }
-        }
+        public async Task GetAsync() => await WrapperGetEntitiesAsync<User>();
 
         [Command("modify")]
         [MandatoryArguments(Id)]
         [OptionalArguments(IsPremium, Settings)]
-        public async Task ModifyAsync()
-        {
-            User entity = SQL.Users.Find(GetArgUInt32(Id));
-            if(entity != null)
-            {
-                ApplyInput(entity);
-                await UpdateEntityAsync(entity);
-                Reply($"User `{entity.DiscordId}` has been modified successfully.");
-            }
-            else
-            {
-                ReplyError("User db id invalid. 404 not found.");
-            }
-        }
+        public async Task ModifyAsync() => await WrapperModifyEntityAsync<User, uint>();
 
         [Command("remove")]
         [MandatoryArguments(Id)]
-        public async Task RemoveAsync()
-        {
-            User entity = SQL.Users.Find(GetArgUInt32(Id));
-            ulong discord_id = entity.DiscordId;
-            await RemoveEntityAsync(entity);
-            Reply($"User `{discord_id}` has been successfully removed.");
-        }
+        public async Task RemoveAsync() => await WrapperRemoveEntityAsync<User, uint>();
     }
 }

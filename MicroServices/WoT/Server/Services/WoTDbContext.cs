@@ -1,31 +1,21 @@
 ﻿using System;
 using System.Threading.Tasks;
-using LionLibrary.Framework;
-using LionLibrary.Commands;
-using LionLibrary.Extensions;
-using LionLibrary.SQL;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
-using WoT.Server.Boot;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Design;
-using WoT.Shared;
+using LionLibrary.Commands;
+using LionLibrary.SQL;
 using LionLibrary.Utils;
+using WoT.Shared;
 
 namespace WoT.Server
 {
     public class WoTDbContext : DbContext
     {
-        ///<summary>users</summary>
-        public DbSet<User> Users { get; set; }
-        public DbSet<Character> Characters { get; set; }
-        public DbSet<CharacterWork> CharactersWork { get; set; }
-
         private readonly IServiceProvider _services;
 
         public WoTDbContext(DbContextOptions<WoTDbContext> options) : base(options) { }
-            
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

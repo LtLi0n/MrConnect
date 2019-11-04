@@ -98,10 +98,13 @@ namespace WoT.Shared
             return (_level, _xp, _xpCap);
         }
 
-        public async Task<CharacterWorkFinishedEventArgs> UpdateAsync(DbContext db, DbSet<User> users, DbSet<Character> characters)
+        public async Task<CharacterWorkFinishedEventArgs> UpdateAsync(DbContext db)
         {
             if (DateTime.Now >= WorkFinishesAt)
             {
+                DbSet<User> users = db.Set<User>();
+                DbSet<Character> characters = db.Set<Character>();
+
                 Character character = characters.Find(CharacterId);
                 User user = users.Find(character.UserId);
 

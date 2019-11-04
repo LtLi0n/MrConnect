@@ -20,8 +20,8 @@ namespace WoT.Server
         
         public async Task UpdateAsync(IServiceProvider services)
         {
-            WoTDbContext db = services.GetService<WoTDbContext>();
-            IQueryable<CharacterWork> workers = db.CharactersWork.Where(x => x.IsWorking);
+            WoTDbContext db = services.GetRequiredService<WoTDbContext>();
+            IQueryable<CharacterWork> workers = db.Set<CharacterWork>().Where(x => x.IsWorking);
 
             foreach(CharacterWork worker in workers)
             {
@@ -32,7 +32,7 @@ namespace WoT.Server
         ///<summary>Finish work if it's due to be done.</summary>
         private async Task HandleWorker(WoTDbContext db, CharacterWork worker)
         {
-            var args = await worker.UpdateAsync(db, db.Users, db.Characters);
+            var args = await worker.UpdateAsync(db);
 
             if(args != null)
             {

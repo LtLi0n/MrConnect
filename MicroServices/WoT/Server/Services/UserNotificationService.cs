@@ -28,7 +28,7 @@ namespace WoT.Server
         {
             CharacterWorkService.WorkFinished += (o, e) =>
             {
-                User user = Db.Users.Find(e.Character.UserId);
+                User user = Db.Set<User>().Find(e.Character.UserId);
                 CharacterWork worker = e.Entity as CharacterWork;
 
                 UserApi.SendMessage(

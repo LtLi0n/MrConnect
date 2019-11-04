@@ -17,67 +17,36 @@ namespace WoT.Server.Network.Commands.Entities
     {
         public void ApplyInput(Character entity, bool assign_mandatory = true)
         {
-            if(assign_mandatory)
+            if (assign_mandatory)
             {
                 TryFill<string>(Name, x => entity.Name = x);
-                TryFill<ulong>(Gold, x => entity.Gold = x);
             }
+            
+            TryFill<ulong>(Gold, x => entity.Gold = x);
         }
 
         [Command("add")]
         [MandatoryArguments(UserId, Name)]
         [OptionalArguments(Gold)]
-        public async Task AddAsync()
-        {
-            Character entity = new Character
-            {
-                UserId = GetArgUInt32(UserId),
-                Name = Args[Name]
-            };
-            ApplyInput(entity, assign_mandatory: false);
-            uint id = await AddEntityAsync(entity);
-            Reply($"Character `{id}` has been successfully added.", id);
-        }
+        public async Task AddAsync() =>
+            await WrapperAddEntityAsync<Character, uint>(
+                () => new Character
+                {
+                    UserId = GetArgUInt32(UserId),
+                    Name = Args[Name]
+                });
 
         [Command("get")]
         [OptionalArguments(Id)]
-        public async Task GetAsync()
-        {
-            if (HasArg(Id)) //Id
-            {
-                ReplyEntries(SQL.Characters, ParseIdsUInt32(Args[Id]));
-            }
-            else
-            {
-                ReplyEntries(SQL.Characters);
-            }
-        }
+        public async Task GetAsync() => await WrapperGetEntitiesAsync<Character>();
 
         [Command("modify")]
         [MandatoryArguments(Id)]
         [OptionalArguments(Name, Gold)]
-        public async Task ModifyAsync()
-        {
-            Character entity = SQL.Characters.Find(GetArgUInt32(Id));
-            if (entity != null)
-            {
-                ApplyInput(entity);
-                await UpdateEntityAsync(entity);
-                Reply($"Character `{Args[Id]}` has been modified successfully.");
-            }
-            else
-            {
-                ReplyError("Character db id invalid. 404 not found.");
-            }
-        }
+        public async Task ModifyAsync() => await WrapperModifyEntityAsync<Character, uint>();
 
         [Command("remove")]
         [MandatoryArguments(Id)]
-        public async Task RemoveAsync()
-        {
-            Character entity = SQL.Characters.Find(GetArgUInt32(Id));
-            await RemoveEntityAsync(entity);
-            Reply($"Character `{Args[Id]}` has been successfully removed.");
-        }
+        public async Task RemoveAsync() => await WrapperRemoveEntityAsync<Character, uint>();
     }
 }

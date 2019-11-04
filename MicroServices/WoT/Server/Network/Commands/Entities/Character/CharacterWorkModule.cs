@@ -35,36 +35,15 @@ namespace WoT.Server.Network.Commands.Entities
 
         [Command("get")]
         [OptionalArguments(Id)]
-        public async Task GetAsync()
-        {
-            ReplyEntries(SQL.CharactersWork);
-        }
+        public async Task GetAsync() => await WrapperGetEntitiesAsync<CharacterWork>();
 
         [Command("modify")]
         [MandatoryArguments(CharacterId)]
         [OptionalArguments(IsWorking, CommittedHours, WorkFinishesAt, TotalHours)]
-        public async Task ModifyAsync()
-        {
-            CharacterWork entity = SQL.CharactersWork.Find(GetArgUInt32(CharacterId));
-            if (entity != null)
-            {
-                ApplyInput(entity);
-                await UpdateEntityAsync(entity);
-                Reply($"CharacterWork `{Args[CharacterId]}` has been modified successfully.");
-            }
-            else
-            {
-                ReplyError("User db id invalid. 404 not found.");
-            }
-        }
+        public async Task ModifyAsync() => await WrapperModifyEntityAsync<CharacterWork, uint>(GetArgUInt32(CharacterId));
 
         [Command("remove")]
         [MandatoryArguments(CharacterId)]
-        public async Task RemoveAsync()
-        {
-            CharacterWork entity = SQL.CharactersWork.Find(GetArgUInt32(CharacterId));
-            await RemoveEntityAsync(entity);
-            Reply($"User `{Args[CharacterId]}` has been successfully removed.");
-        }
+        public async Task RemoveAsync() => await WrapperRemoveEntityAsync<CharacterWork, uint>();
     }
 }
