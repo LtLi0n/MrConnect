@@ -38,7 +38,7 @@ namespace MrConnect.Server.Boot
             AppConfig config = new AppConfig();
             {
                 sc.AddSingleton(config);
-                sc.AddSingleton<IWoTServiceConnectionConfig>(config);
+                sc.AddSingleton(config.WoTServiceConnectionConfig);
                 sc.AddSingleton<IServerConfig>(config);
                 sc.AddSingleton<ISslServerConfig>(config);
                 sc.AddSingleton<IDataModuleConfig>(config);

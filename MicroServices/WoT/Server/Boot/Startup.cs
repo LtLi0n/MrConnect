@@ -34,7 +34,7 @@ namespace WoT.Server.Boot
             AppConfig config = new AppConfig();
             {
                 sc.AddSingleton(config);
-                sc.AddSingleton<IMrConnectServiceConnectionConfig>(config);
+                sc.AddSingleton(config.MrConnectServiceConnectionConfig);
                 sc.AddSingleton<IServerConfig>(config);
                 sc.AddSingleton<ISslServerConfig>(config);
                 sc.AddSingleton<IDataModuleConfig>(config);

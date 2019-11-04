@@ -5,13 +5,13 @@ using System;
 
 namespace WoT.Shared
 {
-    public class WoTConnector : ServerConnector, IWoTServiceConnectionConfig
+    public class WoTConnector : ServerConnector
     {
         public UserApi Users => base.GetController<UserApi>();
 
         public WoTConnector(
             IServiceProvider services,
-            IWoTServiceConnectionConfig config,
+            WoTServiceConnectionConfig config,
             ILogService logger) : base(services, config, logger) { }
 
         protected override void CreateApiControllers(ServiceCollection routes)

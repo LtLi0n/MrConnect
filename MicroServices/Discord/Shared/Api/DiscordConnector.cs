@@ -5,11 +5,11 @@ using System;
 
 namespace Discord.Shared
 {
-    public class DiscordConnector : ServerConnector, IDiscordServiceConnectionConfig
+    public class DiscordConnector : ServerConnector
     {
         public DiscordConnector(
             IServiceProvider services,
-            IDiscordServiceConnectionConfig config,
+            DiscordServiceConnectionConfig config,
             ILogService logger) : base(services, config, logger) { }
         
         protected override void CreateApiControllers(ServiceCollection routes)
