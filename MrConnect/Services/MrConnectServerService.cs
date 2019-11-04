@@ -7,9 +7,6 @@ namespace MrConnect.Server
 {
     public class MrConnectServerService : LionServer<SocketMrConnectUser, CustomCommandContext>
     {
-        public MrConnectServerService(IServiceProvider services) : base(services)
-        {
-
-        }
+        public MrConnectServerService(IServiceProvider services) : base(services) { }
     }
 }

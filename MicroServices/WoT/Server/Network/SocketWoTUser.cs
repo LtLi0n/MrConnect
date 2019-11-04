@@ -7,7 +7,6 @@ namespace WoT.Server.Network
     {
         public SocketWoTUser(LionClient client) : base(client)
         {
-
         }
     }
 }
