@@ -47,7 +47,6 @@ namespace WoT.Server.Boot
                 contextLifetime: ServiceLifetime.Transient);
 
             sc.AddSingleton<CharacterWorkService>();
-
             sc.AddSingleton<UpdateService>();
 
             return sc.BuildServiceProvider();

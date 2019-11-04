@@ -11,7 +11,7 @@ namespace WoT.Shared
             string hostPath,
             string portPath,
             string certNamePath,
-            string pingPath) :
-            base(config, serverNamePath, hostPath, portPath, certNamePath, pingPath) { }
+            string pingRoutePath) :
+            base(config, serverNamePath, hostPath, portPath, certNamePath, pingRoutePath) { }
     }
 }

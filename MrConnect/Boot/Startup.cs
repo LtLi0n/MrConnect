@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using WoT.Shared;
+using Discord.Shared;
 
 namespace MrConnect.Server.Boot
 {
@@ -34,11 +35,13 @@ namespace MrConnect.Server.Boot
             sc.RegisterLionLibraryTypes();
             sc.AddSingleton<DiscordService>();
             sc.AddSingleton<WoTConnector>();
+            sc.AddSingleton<DiscordConnector>();
 
             AppConfig config = new AppConfig();
             {
                 sc.AddSingleton(config);
                 sc.AddSingleton(config.WoTServiceConnectionConfig);
+                sc.AddSingleton(config.DiscordServiceConnectionConfig);
                 sc.AddSingleton<IServerConfig>(config);
                 sc.AddSingleton<ISslServerConfig>(config);
                 sc.AddSingleton<IDataModuleConfig>(config);
@@ -74,7 +77,8 @@ namespace MrConnect.Server.Boot
             await discord.InstallCommandsAsync();
             await discord.StartAsync();
 
-            await _services.GetService<WoTConnector>().StartAsync();
+            _services.GetService<WoTConnector>().StartAsync();
+            _services.GetService<DiscordConnector>().StartAsync();
 
             await Task.Delay(-1);
         }

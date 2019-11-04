@@ -1,5 +1,6 @@
 ﻿using LionLibrary.Utils;
 using WoT.Shared;
+using Discord.Shared;
 
 namespace MrConnect.Server.Boot
 {
@@ -25,6 +26,7 @@ namespace MrConnect.Server.Boot
         int IDataModuleConfig.MaxEntriesPerPage { get; } = 500;
 
         public WoTServiceConnectionConfig WoTServiceConnectionConfig { get; }
+        public DiscordServiceConnectionConfig DiscordServiceConnectionConfig { get; }
 
         public AppConfig() : base(PATH_CONFIG) 
         {
@@ -34,7 +36,15 @@ namespace MrConnect.Server.Boot
                 hostPath: "services:wot:host",
                 portPath: "services:wot:port",
                 certNamePath: "services:wot:cert_sn",
-                pingPath: "services:wot:ping_route");
+                pingRoutePath: "services:wot:ping_route");
+
+            DiscordServiceConnectionConfig = new DiscordServiceConnectionConfig(
+                this,
+                serverNamePath: "Discord",
+                hostPath: "services:discord:host",
+                portPath: "services:discord:port",
+                certNamePath: "services:discord:cert_sn",
+                pingRoutePath: "services:discord:ping_route");
         }
 
     }

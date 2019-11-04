@@ -12,6 +12,7 @@ using System.Linq;
 using Discord.WebSocket;
 using System;
 using System.Text;
+using Discord.Shared;
 
 namespace MrConnect.Server.Discord
 {
@@ -19,6 +20,7 @@ namespace MrConnect.Server.Discord
     {
         public AppConfig Config { get; set; }
         public WoTConnector WoT { get; set; }
+        public DiscordConnector Discord { get; set; }
 
         [Command("ping")]
         public async Task Ping()
@@ -211,8 +213,15 @@ namespace MrConnect.Server.Discord
                 {
                     Name = $"⚔️ WoT Service ⚔️",
                     Value = $"{processing_emoji} Pinging..."
+                },
+                new EmbedFieldBuilder
+                {
+                    Name = $"🤔 Discord Service 🤔",
+                    Value = $"{processing_emoji} Pinging..."
                 }
             };
+
+            //todo, should move them to a generic helper method class, this is yikes
 
             //WoT Service ping
             {
@@ -220,6 +229,13 @@ namespace MrConnect.Server.Discord
 
                 await PingAndModifyField(WoT, eb.Fields[0]);
                 eb.Fields[0].Value += "\n\u200b";
+                await msg.ModifyAsync(x => x.Embed = eb.Build());
+            }
+
+            //Discord Service ping
+            {
+                await PingAndModifyField(Discord, eb.Fields[1]);
+                eb.Fields[1].Value += "\n\u200b";
                 await msg.ModifyAsync(x => x.Embed = eb.Build());
             }
 

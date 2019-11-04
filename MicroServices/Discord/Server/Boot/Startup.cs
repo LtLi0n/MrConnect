@@ -28,6 +28,22 @@ namespace Discord.Server
         {
             ServiceCollection sc = new ServiceCollection();
             sc.RegisterLionLibraryTypes();
+            sc.AddSingleton<MrConnectConnector>();
+
+            AppConfig config = new AppConfig();
+            {
+                sc.AddSingleton(config);
+                sc.AddSingleton(config.MrConnectServiceConnectionConfig);
+                sc.AddSingleton<IServerConfig>(config);
+                sc.AddSingleton<ISslServerConfig>(config);
+                sc.AddSingleton<IDataModuleConfig>(config);
+                sc.AddSingleton<IConnectionStringConfig>(config);
+            }
+
+            sc.AddSingleton<DiscordServerService>();
+            sc.AddDbContext<DiscordDbContext>(
+                x => DiscordDbContext.UseMySqlOptions(x, config),
+                contextLifetime: ServiceLifetime.Transient);
 
             return sc.BuildServiceProvider();
         }
