@@ -28,7 +28,8 @@ namespace Discord.Server.Network.Commands.Entities
             WrapperAddEntityAsync<Fact, uint>(
                 () => new Fact
                 {
-                    UserId = GetArgUInt64(Id),
+                    UserId = GetArgUInt64(UserId),
+                    Content = Args[Content],
                     AddedAt = DateTime.Now
                 });
 

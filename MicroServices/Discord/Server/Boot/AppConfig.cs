@@ -22,9 +22,9 @@ namespace Discord.Server
         int IDataModuleConfig.MaxEntriesPerPage { get; } = 500;
 
         string IConnectionStringConfig.Server => base["mysql:host"];
-        string IConnectionStringConfig.Database => base["mysql:databases:wot:schema"];
-        string IConnectionStringConfig.User => base["mysql:databases:wot:user"];
-        string IConnectionStringConfig.Password => base["mysql:databases:wot:password"];
+        string IConnectionStringConfig.Database => base["mysql:databases:discord:schema"];
+        string IConnectionStringConfig.User => base["mysql:databases:discord:user"];
+        string IConnectionStringConfig.Password => base["mysql:databases:discord:password"];
 
         public MrConnectServiceConnectionConfig MrConnectServiceConnectionConfig { get; }
 

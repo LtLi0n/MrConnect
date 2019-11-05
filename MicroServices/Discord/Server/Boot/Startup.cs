@@ -58,6 +58,17 @@ namespace Discord.Server
             await _services.GetService<ICommandService>()
                 .InstallCommandsAsync(Assembly.GetExecutingAssembly(), _services);
 
+            //Init server
+            _services.GetService<DiscordServerService>().Init(
+                client => new Network.SocketDiscordUser(client),
+                (cService, user, packet) => new DataServerHelpers.CustomCommandContext(
+                    _services.GetService<ICommandService>(),
+                    user,
+                    packet));
+
+            //Start server
+            _services.GetService<DiscordServerService>().Start(_services);
+
             while (true)
             {
                 var key = Console.ReadKey();

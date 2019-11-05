@@ -30,6 +30,8 @@ namespace Discord.Server.Network.Commands.Entities
                 () => new User
                 {
                     Id = GetArgUInt64(Id),
+                    Username = Args[Username],
+                    Discriminator = Args[Discriminator],
                     AddedAt = DateTime.Now
                 });
 
