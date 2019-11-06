@@ -59,8 +59,12 @@ namespace WoT.Server.Boot
             logger.CursorVisible = false;
             logger.LogLevel = LogSeverity.Verbose;
 
-            await _services.GetService<ICommandService>()
-                .InstallCommandsAsync(Assembly.GetExecutingAssembly(), _services);
+            {
+                var types = Assembly.GetExecutingAssembly().DefinedTypes;
+
+                await _services.GetService<ICommandService>()
+                    .InstallCommandsAsync(types, _services);
+            }
 
             await _services.GetService<MrConnectConnector>().StartAsync();
 

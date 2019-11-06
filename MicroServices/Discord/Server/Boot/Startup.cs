@@ -55,8 +55,12 @@ namespace Discord.Server
             logger.CursorVisible = false;
             logger.LogLevel = LionLibrary.Framework.LogSeverity.Verbose;
 
-            await _services.GetService<ICommandService>()
-                .InstallCommandsAsync(Assembly.GetExecutingAssembly(), _services);
+            {
+                var types = Assembly.GetExecutingAssembly().DefinedTypes;
+
+                await _services.GetService<ICommandService>()
+                    .InstallCommandsAsync(types, _services);
+            }
 
             //Init server
             _services.GetService<DiscordServerService>().Init(

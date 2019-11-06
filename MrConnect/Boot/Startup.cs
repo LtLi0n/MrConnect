@@ -59,8 +59,12 @@ namespace MrConnect.Server.Boot
             logger.LogLevel = LogSeverity.Debug;
             logger.CursorVisible = false;
 
-            await _services.GetService<ICommandService>()
-                .InstallCommandsAsync(Assembly.GetExecutingAssembly(), _services);
+            {
+                var types = Assembly.GetExecutingAssembly().DefinedTypes;
+
+                await _services.GetService<ICommandService>()
+                    .InstallCommandsAsync(types, _services);
+            }
 
             //Init server
             _services.GetService<MrConnectServerService>().Init(
