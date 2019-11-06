@@ -35,9 +35,8 @@ namespace Discord.Shared
 
         public async Task<Fact> GetRandomFactAsync()
         {
-            Packet factPacket = await CRUD.Client.DownloadPacketAsync(x => x.Header = $"{MODULE}.get_random");
-            Fact fact = factPacket.As<Fact>();
-            return fact;
+            var factPacket = await CRUD.Client.DownloadPacketAsync<Fact>(x => x.Header = $"{MODULE}.get_random");
+            return factPacket.ToEntity();
         }
 
         public void FillPacketBucket(PacketBuilder pb, Fact entity)

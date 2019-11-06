@@ -1,5 +1,5 @@
 ﻿using LionLibrary.Network;
-
+using System.Threading.Tasks;
 using static DataServerHelpers.SharedRef;
 using static Discord.Shared.User.Ref;
 
@@ -25,6 +25,12 @@ namespace Discord.Shared
         public IApiControllerCRUD<User, ulong> CRUD => this;
 
         public UserApi(DiscordConnector conn) : base(conn) { }
+
+        public async Task<User> GetUserAsync(ulong id)
+        {
+            Packet<User> userPacket = await CRUD.GetWhereAsync(id).ConfigureAwait(false);
+            return userPacket.ToEntity();
+        }
 
         public void FillPacketBucket(PacketBuilder pb, User entity)
         {

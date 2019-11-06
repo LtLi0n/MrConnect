@@ -15,6 +15,7 @@ namespace MrConnect.Server
 
         public DiscordConnector DiscordConnector { get; }
         public FactApi FactApi => DiscordConnector.GetController<FactApi>();
+        public UserApi UserApi => DiscordConnector.GetController<UserApi>();
 
         public FactService(DiscordService discord, DiscordConnector discordConn, ILogService logger = null)
         {
@@ -44,8 +45,12 @@ namespace MrConnect.Server
 
                 if (fact != null)
                 {
-                    await Discord.Client.SetGameAsync(fact.Content);
-                    return true;
+                    User user = await UserApi.GetUserAsync(fact.UserId);
+                    if(user != null)
+                    {
+                        await Discord.Client.SetGameAsync($"\"{fact.Content}\" - {user.Username}#{user.Discriminator}.");
+                        return true;
+                    }
                 }
             } 
             catch (Exception ex)
