@@ -79,15 +79,11 @@ namespace MrConnect.Server.Boot
 
             DiscordService discord = _services.GetService<DiscordService>();
             await discord.InstallCommandsAsync();
+
             await discord.StartAsync();
-
-            await _services
-                .GetService<DiscordConnector>()
-                .StartAsync()
-                .ContinueWith(async x => await _services.GetService<FactService>().StartAsync());
-
-
-            _services.GetService<WoTConnector>().StartAsync();
+            await _services.GetService<DiscordConnector>().StartAsync();
+            await _services.GetService<FactService>().StartAsync();
+            await _services.GetService<WoTConnector>().StartAsync();
 
             await Task.Delay(-1);
         }
