@@ -1,17 +1,5 @@
-﻿using MrConnect.Server.Boot;
-using Discord;
-using Discord.Rest;
-using Discord.Commands;
-using System.Collections.Generic;
+﻿using Discord.Commands;
 using System.Threading.Tasks;
-using MrConnect.Server.Services;
-using DataServerHelpers;
-using WoT.Shared;
-using LionLibrary.Network;
-using System.Linq;
-using Discord.WebSocket;
-using System;
-using System.Text;
 
 namespace MrConnect.Server.Discord
 {

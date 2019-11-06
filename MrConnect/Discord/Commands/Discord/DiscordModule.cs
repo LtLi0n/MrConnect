@@ -1,18 +1,8 @@
-﻿using MrConnect.Server.Boot;
-using Discord;
-using Discord.Rest;
-using Discord.Commands;
-using System.Collections.Generic;
+﻿using Discord.Commands;
 using System.Threading.Tasks;
-using MrConnect.Server.Services;
-using DataServerHelpers;
-using WoT.Shared;
 using LionLibrary.Network;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
-using LionLibrary.Extensions;
-using MrConnect.Server.Discord;
-
 using Discord.Shared;
 
 using UserApi = Discord.Shared.UserApi;

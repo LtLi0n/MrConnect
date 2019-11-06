@@ -4,7 +4,6 @@ using Discord.Rest;
 using Discord.Commands;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MrConnect.Server.Services;
 using DataServerHelpers;
 using WoT.Shared;
 using LionLibrary.Network;

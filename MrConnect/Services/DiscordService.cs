@@ -2,16 +2,13 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using LionLibrary.Framework;
-using LionLibrary.Network;
 using MrConnect.Server.Boot;
-using MrConnect.Discord.Commands;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
-using static MrConnect.Server.Discord.MainModule;
 
-namespace MrConnect.Server.Services
+namespace MrConnect.Server
 {
     public class DiscordService
     {
