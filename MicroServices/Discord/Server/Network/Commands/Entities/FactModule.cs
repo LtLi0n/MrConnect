@@ -19,6 +19,7 @@ namespace Discord.Server.Network.Commands.Entities
         {
             if (assign_mandatory)
             {
+                TryFill<ulong>(UserId, x => entity.UserId = x);
                 TryFill<string>(Content, x => entity.Content = x);
             }
         }
