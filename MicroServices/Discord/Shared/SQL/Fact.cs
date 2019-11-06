@@ -36,7 +36,7 @@ namespace Discord.Shared
         {
             modelBuilder.Entity<Fact>(x =>
             {
-
+                x.HasIndex(fact => fact.Content).IsUnique();
             });
         }
     }

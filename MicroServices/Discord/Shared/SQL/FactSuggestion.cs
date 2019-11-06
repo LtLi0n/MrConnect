@@ -36,7 +36,7 @@ namespace Discord.Shared
         {
             modelBuilder.Entity<FactSuggestion>(x =>
             {
-
+                x.HasIndex(factSugg => factSugg.Content).IsUnique();
             });
         }
     }
