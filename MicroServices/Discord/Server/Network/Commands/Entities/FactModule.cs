@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord.Shared;
 using DataServerHelpers;
 using LionLibrary.Commands;
+using LionLibrary.Utils;
 
 using static DataServerHelpers.SharedRef;
 using static Discord.Shared.Fact.Ref;
@@ -34,6 +36,20 @@ namespace Discord.Server.Network.Commands.Entities
 
         [Command("get")]
         public Task GetAsync() => WrapperGetEntitiesAsync<Fact>();
+
+        [Command("get_random")]
+        public Task GetRandomAsync()
+        {
+            var dbSet = SQL.Set<Fact>();
+            RandomThreadSafe rts = new RandomThreadSafe();
+
+            int count = dbSet.Count();
+            int skipN = rts.Next(count);
+
+            Reply(SQL.Set<Fact>().Skip(skipN).FirstOrDefault());
+
+            return Task.CompletedTask;
+        }
 
         [Command("modify")]
         [MandatoryArguments(Id)]

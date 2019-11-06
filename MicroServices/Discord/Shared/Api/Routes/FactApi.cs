@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using LionLibrary.Network;
 
 using static DataServerHelpers.SharedRef;
@@ -30,6 +31,13 @@ namespace Discord.Shared
         public FactApi(DiscordConnector conn, UserApi userApi) : base(conn) 
         {
             UserApi = userApi;
+        }
+
+        public async Task<Fact> GetRandomFactAsync()
+        {
+            Packet factPacket = await CRUD.Client.DownloadPacketAsync(x => x.Header = $"{MODULE}.get_random");
+            Fact fact = factPacket.As<Fact>();
+            return fact;
         }
 
         public void FillPacketBucket(PacketBuilder pb, Fact entity)

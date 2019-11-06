@@ -47,6 +47,7 @@ namespace MrConnect.Server.Boot
             }
 
             sc.AddSingleton<MrConnectServerService>();
+            sc.AddSingleton<FactService>();
 
             return sc.BuildServiceProvider();
         }
@@ -76,8 +77,13 @@ namespace MrConnect.Server.Boot
             await discord.InstallCommandsAsync();
             await discord.StartAsync();
 
+            await _services
+                .GetService<DiscordConnector>()
+                .StartAsync()
+                .ContinueWith(async x => await _services.GetService<FactService>().StartAsync());
+
+
             _services.GetService<WoTConnector>().StartAsync();
-            _services.GetService<DiscordConnector>().StartAsync();
 
             await Task.Delay(-1);
         }
