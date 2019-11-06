@@ -48,7 +48,7 @@ namespace MrConnect.Server
                     User user = await UserApi.GetUserAsync(fact.UserId);
                     if(user != null)
                     {
-                        await Discord.Client.SetGameAsync($"\"{fact.Content}\" - {user.Username}#{user.Discriminator}.");
+                        await Discord.Client.SetGameAsync($"'{fact.Content}' - {user.Username}#{user.Discriminator}.");
                         return true;
                     }
                 }
