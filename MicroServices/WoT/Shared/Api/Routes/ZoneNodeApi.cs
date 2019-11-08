@@ -7,7 +7,7 @@ namespace WoT.Shared
 {
     public class ZoneNodeApi : EpicApiController<ZoneNode, uint>
     {
-        public const string MODULE = "zones";
+        public const string MODULE = "nodes";
         public static string MODULE_ABSOLUTE = $"{ZoneApi.MODULE}.{MODULE}";
 
         public ZoneNodeApi(WoTConnector conn) : base(conn, MODULE_ABSOLUTE) { }
