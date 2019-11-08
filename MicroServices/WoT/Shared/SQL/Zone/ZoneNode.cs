@@ -33,15 +33,15 @@ namespace WoT.Shared
         public uint ZoneId { get; set; }
         public Zone Zone { get; set; }
 
+        [Required]
         public string Name { get; set; }
         public string? Description { get; set; }
 
-        public uint? ZoneNodeNorthId { get; set; }        
+        public uint? ZoneNodeNorthId { get; set; }
         public ZoneNode? ZoneNodeNorth { get; set; }
 
         public uint? ZoneNodeSouthId { get; set; }
         public ZoneNode? ZoneNodeSouth { get; set; }
-
 
         public uint? ZoneNodeEastId { get; set; }
         public ZoneNode? ZoneNodeEast { get; set; }
@@ -56,9 +56,8 @@ namespace WoT.Shared
         {
             modelBuilder.Entity<ZoneNode>(x =>
             {
-                x.HasMany(node => node.Characters)
-                .WithOne(character => character.ZoneNode)
-                .HasForeignKey(character => character.ZoneNodeId);
+                //makes zone node names unique to that zone.
+                x.HasIndex(node => new { node.ZoneId, node.Name }).IsUnique();
 
                 x.HasOne(node => node.ZoneNodeNorth)
                 .WithOne(linked_node => linked_node.ZoneNodeSouth)
@@ -70,11 +69,11 @@ namespace WoT.Shared
 
                 x.HasOne(node => node.ZoneNodeEast)
                 .WithOne(linked_node => linked_node.ZoneNodeWest)
-                .HasForeignKey<ZoneNode>(linked_node => linked_node.ZoneNodeEastId);
+                .HasForeignKey<ZoneNode>(linked_node => linked_node.ZoneNodeWestId);
 
                 x.HasOne(node => node.ZoneNodeWest)
                 .WithOne(linked_node => linked_node.ZoneNodeEast)
-                .HasForeignKey<ZoneNode>(linked_node => linked_node.ZoneNodeWestId);
+                .HasForeignKey<ZoneNode>(linked_node => linked_node.ZoneNodeEastId);
             });
         }
     }

@@ -20,6 +20,9 @@ namespace WoT.Shared
             routes.AddSingleton<UserApi>();
             routes.AddSingleton<CharacterApi>();
             routes.AddSingleton<CharacterWorkApi>();
+
+            routes.AddSingleton<ZoneApi>();
+            routes.AddSingleton<ZoneNodeApi>();
         }
     }
 }

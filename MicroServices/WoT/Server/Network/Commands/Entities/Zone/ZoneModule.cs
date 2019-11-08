@@ -8,7 +8,7 @@ using static WoT.Shared.Zone.Ref;
 
 namespace WoT.Server.Network.Commands.Entities
 {
-    [Module("zones")]
+    [Module(ZoneApi.MODULE)]
     public class ZoneModule : 
         SocketDataModuleBase<CustomCommandContext, WoTDbContext>,
         IWoTDbModule<Zone>
@@ -27,52 +27,24 @@ namespace WoT.Server.Network.Commands.Entities
         [Command("add")]
         [MandatoryArguments(CodeName, Name)]
         [OptionalArguments(Description)]
-        public async Task AddAsync()
-        {
-            Zone entity = new Zone
-            {
-                CodeName = Args[CodeName],
-                Name = Args[Name]
-            };
-            ApplyInput(entity, assign_mandatory: false);
-            uint id = await AddEntityAsync(entity);
-            Reply($"Zone `{id}` has been successfully added.", id);
-        }
+        public Task AddAsync() => 
+            WrapperAddEntityAsync<Zone, uint>(() => 
+            new Zone 
+            { 
+                Name = Args[Name], 
+                CodeName = Args[CodeName] 
+            });
 
         [Command("get")]
-        [OptionalArguments(Id)]
-        public async Task GetAsync()
-        {
-            if (HasArg(Id)) //Id
-            {
-                ReplyEntries(SQL.Set<Zone>(), ParseIdsUInt32(Args[Id]));
-            }
-            else
-            {
-                ReplyEntries(SQL.Set<Zone>());
-            }
-        }
+        public Task GetAsync() => WrapperGetEntitiesAsync<Zone>();
 
         [Command("modify")]
         [MandatoryArguments(Id)]
         [OptionalArguments(CodeName, Name, Description)]
-        public async Task ModifyAsync()
-        {
-            Zone entity = SQL.Set<Zone>().Find(GetArgUInt32(Id));
-            if (entity != null)
-            {
-                ApplyInput(entity);
-                await UpdateEntityAsync(entity);
-                Reply($"Zone `{Args[Id]}` has been modified successfully.");
-            }
-            else
-            {
-                ReplyError("Zone db id invalid. 404 not found.");
-            }
-        }
+        public Task ModifyAsync() => WrapperModifyEntityAsync<Zone, uint>();
 
         [Command("remove")]
         [MandatoryArguments(Id)]
-        public async Task RemoveAsync() => await WrapperRemoveEntityAsync<Zone, uint>();
+        public Task RemoveAsync() => WrapperRemoveEntityAsync<Zone, uint>();
     }
 }

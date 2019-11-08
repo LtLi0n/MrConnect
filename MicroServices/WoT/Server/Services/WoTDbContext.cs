@@ -31,6 +31,9 @@ namespace WoT.Server
         {
             User.CreateModel(modelBuilder);
             Character.CreateModel(modelBuilder);
+            Zone.CreateModel(modelBuilder);
+            ZoneNode.CreateModel(modelBuilder);
+            //ZoneNodeGateway.CreateModel(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
         }
