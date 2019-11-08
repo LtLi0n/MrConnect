@@ -1,41 +1,26 @@
-﻿using LionLibrary.Network;
+﻿using DataServerHelpers;
+using LionLibrary.Network;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 
-using static DataServerHelpers.SharedRef;
 using static WoT.Shared.CharacterWork.Ref;
 
 namespace WoT.Shared
 {
-    public class CharacterWorkApi : ApiController, IApiControllerCRUD<CharacterWork, uint>
+    public class CharacterWorkApi : EpicApiController<CharacterWork, uint>
     {
         public const string MODULE = "work";
         private static readonly string MODULE_ABSOLUTE = $"{CharacterApi.MODULE}:{MODULE}";
 
-        private static string ADD { get; } = $"{MODULE_ABSOLUTE}.add";
-        private static string GET { get; } = $"{MODULE_ABSOLUTE}.get";
-        private static string MODIFY { get; } = $"{MODULE_ABSOLUTE}.modify";
-        private static string REMOVE { get; } = $"{MODULE_ABSOLUTE}.remove";
-
-        public string IdTag => Id;
-        public string SelectTag => Select;
-        public string WhereTag => Where;
-
-        public string AddRoute => ADD;
-        public string GetRoute => GET;
-        public string ModifyRoute => MODIFY;
-        public string RemoveRoute => REMOVE;
-
         public CharacterApi CharacterApi { get; }
-        public IApiControllerCRUD<CharacterWork, uint> CRUD => this;
 
-        public CharacterWorkApi(WoTConnector connector, CharacterApi characterApi) : base(connector) 
+        public CharacterWorkApi(WoTConnector connector, CharacterApi characterApi) : base(connector, MODULE_ABSOLUTE) 
         {
             CharacterApi = characterApi;
         }
 
-        public void FillPacketBucket(PacketBuilder pb, CharacterWork entity)
+        public override void FillPacketBucket(PacketBuilder pb, CharacterWork entity)
         {
             pb[CharacterId] = entity.CharacterId;
             pb[IsWorking] = entity.IsWorking;
@@ -44,11 +29,15 @@ namespace WoT.Shared
             pb[TotalHours] = entity.TotalHours;
         }
 
-        public async Task<CharacterWork> GetByDiscordIdAsync(ulong discordId)
+        public async Task<CharacterWork?> GetByDiscordIdAsync(ulong discordId)
         {
-            Character character = await CharacterApi.GetByDiscordIdAsync(discordId);
-            Packet charactersPacket = await CRUD.GetAsync("x => x", $"{CharacterId} == {character.Id}");
-            return charactersPacket.As<IEnumerable<CharacterWork>>().FirstOrDefault();
+            Character? character = await CharacterApi.GetByDiscordIdAsync(discordId).ConfigureAwait(false);
+            if(character != null)
+            {
+                Packet workInfoPacket = await CRUD.GetAsync("x => x", $"{CharacterId} == {character.Id}");
+                return workInfoPacket.As<IEnumerable<CharacterWork>>().FirstOrDefault();
+            }
+            return null;
         }
     }
 }
