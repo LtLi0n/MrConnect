@@ -14,10 +14,9 @@ namespace Discord.Server.Network.Commands.Entities
     {
         public void ApplyInput(User entity, bool assign_mandatory = true)
         {
-            entity.LastUpdatedAt = DateTime.Now;
-
             if (assign_mandatory)
             {
+                entity.LastUpdatedAt = DateTime.Now;
                 TryFill<string>(Username, x => entity.Username = x);
                 TryFill<string>(Discriminator, x => entity.Discriminator = x);
             }
@@ -31,8 +30,7 @@ namespace Discord.Server.Network.Commands.Entities
                 {
                     Id = GetArgUInt64(Id),
                     Username = Args[Username],
-                    Discriminator = Args[Discriminator],
-                    AddedAt = DateTime.Now
+                    Discriminator = Args[Discriminator]
                 });
 
         [Command("get")]

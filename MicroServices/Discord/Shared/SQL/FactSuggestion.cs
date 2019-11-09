@@ -29,8 +29,11 @@ namespace Discord.Shared
         [Required]
         public string Content { get; set; }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime LastUpdatedAt { get; set; }
-        public DateTime AddedAt { get; set; } = DateTime.Now;
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime AddedAt { get; set; }
 
         public static void CreateModel(ModelBuilder modelBuilder)
         {

@@ -33,8 +33,11 @@ namespace Discord.Shared
         [Column(TypeName = "nvarchar(16)")]
         public string? Prefix { get; set; }
 
-        public DateTime LastUpdatedAt { get; set; } = DateTime.Now;
-        public DateTime AddedAt { get; set; } = DateTime.Now;
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime LastUpdatedAt { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime AddedAt { get; set; }
 
         public static void CreateModel(ModelBuilder modelBuilder)
         {

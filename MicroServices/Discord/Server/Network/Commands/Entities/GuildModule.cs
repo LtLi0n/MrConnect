@@ -14,15 +14,14 @@ namespace Discord.Server.Network.Commands.Entities
     {
         public void ApplyInput(Guild entity, bool assign_mandatory = true)
         {
-            entity.LastUpdatedAt = DateTime.Now;
+            TryFill<string>(Prefix, x => entity.Prefix = x);
 
             if (assign_mandatory)
             {
+                entity.LastUpdatedAt = DateTime.Now;
                 TryFill<ulong>(OwnerId, x => entity.OwnerId = x);
                 TryFill<string>(Name, x => entity.Name = x);
             }
-
-            TryFill<string>(Prefix, x => entity.Prefix = x);
         }
 
         [Command("add")]
@@ -34,8 +33,7 @@ namespace Discord.Server.Network.Commands.Entities
                 {
                     Id = GetArgUInt64(Id),
                     OwnerId = GetArgUInt64(OwnerId),
-                    Name = Args[Name],
-                    AddedAt = DateTime.Now
+                    Name = Args[Name]
                 });
 
         [Command("get")]

@@ -31,8 +31,7 @@ namespace Discord.Server.Network.Commands.Entities
                 () => new Fact
                 {
                     UserId = GetArgUInt64(UserId),
-                    Content = Args[Content],
-                    AddedAt = DateTime.Now
+                    Content = Args[Content]
                 });
 
         [Command("get")]

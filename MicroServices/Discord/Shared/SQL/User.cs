@@ -28,8 +28,11 @@ namespace Discord.Shared
         [Required, Column(TypeName = "varchar(4)")]
         public string Discriminator { get; set; }
 
-        public DateTime LastUpdatedAt { get; set; } = DateTime.Now;
-        public DateTime AddedAt { get; set; } = DateTime.Now;
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime LastUpdatedAt { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime AddedAt { get; set; }
 
         ///<summary>Vsauce - You want some spit facts?</summary>
         [JsonIgnore, IgnoreDataMember]

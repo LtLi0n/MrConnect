@@ -14,10 +14,9 @@ namespace Discord.Server.Network.Commands.Entities
     {
         public void ApplyInput(FactSuggestion entity, bool assign_mandatory = true)
         {
-            entity.LastUpdatedAt = DateTime.Now;
-
             if (assign_mandatory)
             {
+                entity.LastUpdatedAt = DateTime.Now;
                 TryFill<ulong>(UserId, x => entity.UserId = x);
                 TryFill<string>(Content, x => entity.Content = x);
             }
@@ -30,8 +29,7 @@ namespace Discord.Server.Network.Commands.Entities
                 () => new Fact
                 {
                     UserId = GetArgUInt64(UserId),
-                    Content = Args[Content],
-                    AddedAt = DateTime.Now
+                    Content = Args[Content]
                 });
 
         [Command("get")]
