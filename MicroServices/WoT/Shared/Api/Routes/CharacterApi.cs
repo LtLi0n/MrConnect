@@ -20,7 +20,7 @@ namespace WoT.Shared
             UserApi = userApi;
         }
 
-        public override void FillPacketBucket(PacketBuilder pb, Character entity)
+        public override void FillPacket(PacketBuilder pb, Character entity)
         {
             pb[Id] = entity.Id;
             pb[UserId] = entity.UserId;
@@ -34,8 +34,7 @@ namespace WoT.Shared
             User? user = await UserApi.GetByDiscordIdAsync(discordId).ConfigureAwait(false);
             if(user != null)
             {
-                Packet charactersPacket = await CRUD.GetAsync("x => x", $"{UserId} == {user.Id}");
-                return charactersPacket.As<IEnumerable<Character>>().FirstOrDefault();
+                return (await CRUD.GetAsync("x => x", $"{UserId} == {user.Id}").ConfigureAwait(false)).ToEntity();
             }
             return null;
         }

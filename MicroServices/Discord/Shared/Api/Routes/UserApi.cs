@@ -18,7 +18,7 @@ namespace Discord.Shared
             return userPacket.ToEntity();
         }
 
-        public override void FillPacketBucket(PacketBuilder pb, User entity)
+        public override void FillPacket(PacketBuilder pb, User entity)
         {
             pb.FillDiscordEntity(entity);
             pb[Username] = entity.Username;

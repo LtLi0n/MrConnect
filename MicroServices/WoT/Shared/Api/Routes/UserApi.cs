@@ -15,7 +15,7 @@ namespace WoT.Shared
 
         public UserApi(WoTConnector connector) : base(connector, MODULE) { }
 
-        public override void FillPacketBucket(PacketBuilder pb, User entity)
+        public override void FillPacket(PacketBuilder pb, User entity)
         {
             pb[Id] = entity.Id;
             pb[DiscordId] = entity.DiscordId;
@@ -25,10 +25,10 @@ namespace WoT.Shared
 
         public async Task<User?> GetByDiscordIdAsync(ulong discordId)
         {
-            Packet userPacket = await CRUD.GetAsync("x => x", $"{DiscordId} == {discordId}").ConfigureAwait(false);
+            var userPacket = await CRUD.GetAsync("x => x", $"{DiscordId} == {discordId}").ConfigureAwait(false);
             if(userPacket.Status == StatusCode.Success)
             {
-                return userPacket.As<IEnumerable<User>>().FirstOrDefault();
+                return userPacket.ToEntity();
             }
             return null;
         }

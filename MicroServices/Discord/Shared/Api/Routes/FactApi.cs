@@ -25,7 +25,7 @@ namespace Discord.Shared
             return factPacket.ToEntity();
         }
 
-        public override void FillPacketBucket(PacketBuilder pb, Fact entity)
+        public override void FillPacket(PacketBuilder pb, Fact entity)
         {
             pb[Id] = entity.Id;
             pb[UserId] = entity.UserId;

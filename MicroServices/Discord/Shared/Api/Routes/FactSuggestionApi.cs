@@ -17,7 +17,7 @@ namespace Discord.Shared
             UserApi = userApi;
         }
 
-        public override void FillPacketBucket(PacketBuilder pb, FactSuggestion entity)
+        public override void FillPacket(PacketBuilder pb, FactSuggestion entity)
         {
             pb.FillDiscordEntity(entity);
 

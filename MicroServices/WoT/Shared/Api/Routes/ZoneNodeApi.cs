@@ -12,7 +12,7 @@ namespace WoT.Shared
 
         public ZoneNodeApi(WoTConnector conn) : base(conn, MODULE_ABSOLUTE) { }
 
-        public override void FillPacketBucket(PacketBuilder pb, ZoneNode entity)
+        public override void FillPacket(PacketBuilder pb, ZoneNode entity)
         {
             pb[ZoneId] = entity.ZoneId;
 

@@ -11,7 +11,7 @@ namespace WoT.Shared
 
         public ZoneApi(WoTConnector conn) : base(conn, MODULE) { }
 
-        public override void FillPacketBucket(PacketBuilder pb, Zone entity)
+        public override void FillPacket(PacketBuilder pb, Zone entity)
         {
             pb[IdTag] = entity.Id;
             pb[CodeName] = entity.CodeName;

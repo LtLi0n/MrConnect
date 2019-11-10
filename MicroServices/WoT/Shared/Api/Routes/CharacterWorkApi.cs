@@ -20,7 +20,7 @@ namespace WoT.Shared
             CharacterApi = characterApi;
         }
 
-        public override void FillPacketBucket(PacketBuilder pb, CharacterWork entity)
+        public override void FillPacket(PacketBuilder pb, CharacterWork entity)
         {
             pb[CharacterId] = entity.CharacterId;
             pb[IsWorking] = entity.IsWorking;
@@ -34,8 +34,7 @@ namespace WoT.Shared
             Character? character = await CharacterApi.GetByDiscordIdAsync(discordId).ConfigureAwait(false);
             if(character != null)
             {
-                Packet workInfoPacket = await CRUD.GetAsync("x => x", $"{CharacterId} == {character.Id}");
-                return workInfoPacket.As<IEnumerable<CharacterWork>>().FirstOrDefault();
+                return (await CRUD.GetAsync("x => x", $"{CharacterId} == {character.Id}").ConfigureAwait(false)).ToEntity();
             }
             return null;
         }
