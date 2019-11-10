@@ -1,11 +1,11 @@
-[submodule "LionLibrary"]
+[submodule "Deps/LionLibrary"]
 	path = Deps/LionLibrary
 	url = https://github.com/LtLi0n/LionLibrary
 	branch = dev-2.0
-[submodule "Discord.Net"]
+[submodule "Deps/Discord.Net"]
 	path = Deps/Discord.Net
 	url = https://github.com/LtLi0n/Discord.Net
 	branch = outer-groups
-[submodule "Emojis"]
+[submodule "Deps/Emojis"]
 	path = Deps/Emojis
 	url = https://github.com/LtLi0n/Emojis
