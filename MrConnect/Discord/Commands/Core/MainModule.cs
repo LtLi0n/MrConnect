@@ -13,6 +13,9 @@ using System;
 using System.Text;
 using Discord.Shared;
 
+using Emoji = NeoSmart.Unicode.Emoji;
+using System.Diagnostics.Eventing.Reader;
+
 namespace MrConnect.Server.Discord
 {
     public class MainModule : ModuleBase<SocketCommandContext>
@@ -43,149 +46,119 @@ namespace MrConnect.Server.Discord
             "%examples%\t\t`%prefix%%cmd%` -- Shows info about you.\n" +
             "\t\t`%prefix%%cmd% Bob123` -- Shows info about targetted user.§")]
         [RequireContext(ContextType.Guild)]
-        public async Task DisplayUserInfoAsync([Remainder] string target = null)
+        public async Task DisplayGuildUserInfoAsync(IGuildUser user = null)
         {
-            IGuildUser showUser = Context.User as IGuildUser;
+            user ??= (IGuildUser)Context.User;
+            string username = user.ToString();
 
-            if (Context.Message.MentionedUsers.Count > 0)
+            EmbedBuilder eb = new EmbedBuilder
             {
-                showUser = (IGuildUser)Context.Message.MentionedUsers.First();
-            }
-            else if (target != null)
-            {
-                var users = Context.GetAddressedUsers(target);
-
-                showUser = users.FirstOrDefault();
-
-                if (showUser == null)
+                Author = new EmbedAuthorBuilder
                 {
-                    throw new Exception("Didn't find such user. Perhaps try a @Mention?");
-                }
-                else if (users.Count() > 1)
-                {
-                    StringBuilder sb = new StringBuilder("Found too many users. Type exact name or @Mention the user instead.\n");
-                    foreach (var user in users)
+                    Name = username,
+                    IconUrl = user.Status switch
                     {
-                        sb.Append($"{user.Username}{user.Discriminator}\n");
+                        UserStatus.Online => $"https://cdn.discordapp.com/emojis/630527350173466655.png",
+                        UserStatus.DoNotDisturb => "https://cdn.discordapp.com/emojis/630527350286843904.png",
+                        UserStatus.Offline => "https://cdn.discordapp.com/emojis/630527349917745153.png",
+                        UserStatus.Invisible => "https://cdn.discordapp.com/emojis/630527349917745153.png",
+                        UserStatus.Idle => "https://cdn.discordapp.com/emojis/630536692654145556.png",
+                        UserStatus.AFK => "https://cdn.discordapp.com/emojis/630536692654145556.png",
+                        _ => "https://cdn.discordapp.com/emojis/643114599893434379.png"
                     }
-                    throw new Exception(sb.ToString());
+                },
+                ThumbnailUrl = user.GetAvatarUrl(),
+                Fields = new List<EmbedFieldBuilder>()
+                {
+                    new EmbedFieldBuilder
+                    {
+                        Name = $"{Emoji.Information} User Information {Emoji.Information}",
+                        Value =
+                        $"```swift\n" +
+                        $"{Emoji.Calendar}  Created User At: {user.CreatedAt.ToString("d")}\n" +
+                        $"{Emoji.Calendar} Joined Server At: {user.JoinedAt.Value.ToString("d")}\n" +
+                        $"{Emoji.Key} Guild Perms: {user.GuildPermissions}```",
+                        IsInline = true
+                    }
+                }
+            };
+
+            if(!string.IsNullOrEmpty(user.Nickname))
+            {
+                eb.Fields.Insert(0, new EmbedFieldBuilder
+                {
+                    Name = "Nickname",
+                    Value = user.Nickname == null ? "Not Set" : $"{user.Nickname}",
+                    IsInline = true
+                });
+            }
+
+            if(user.Activity != null)
+            {
+                if (user.Activity.Type == ActivityType.Listening)
+                {
+                    //Override description by spotify details (album and producer urls are not provided sadly)
+                    if (user.Activity is SpotifyGame spotifyActivity)
+                    {
+                        TimeSpan elapsed = spotifyActivity.Elapsed.Value;
+                        TimeSpan duration = spotifyActivity.Duration.Value;
+
+                        int percentange_elapsed = (int)Math.Ceiling(elapsed.Ticks * 100.0M / duration.Ticks);
+
+                        //create playing song progress line
+                        char[] progress = new string('-', 11).ToCharArray();
+                        {
+                            char[] circle_emoji = Emoji.RadioButton.ToString().ToCharArray();
+                            int emoji_index = percentange_elapsed / 10;
+
+                            progress[emoji_index] = circle_emoji[0];
+                            progress[emoji_index + 1] = circle_emoji[1];
+                        }
+
+
+                        eb.Description =
+                            $"{Emoji.MusicalNote} Listening to **[{spotifyActivity.TrackTitle}]({spotifyActivity.TrackUrl})**\n" +
+                            $"```swift\n{new string(progress)} {elapsed.ToString(@"mm\:ss")}/{duration.ToString(@"mm\:ss")}```\n" +
+                            $"By **{string.Join(", ", spotifyActivity.Artists)}**\n" +
+                            $"On **{spotifyActivity.AlbumTitle}**";
+
+                        eb.ImageUrl = spotifyActivity.AlbumArtUrl;
+                    }
                 }
             }
 
-            EmbedBuilder eb = new EmbedBuilder();
-
-            eb.WithThumbnailUrl(showUser.GetAvatarUrl());
-
-            bool new_user_state = false;
-
-            eb.WithAuthor((x) =>
+            //Add roles
+            if (user.RoleIds.Count > 0)
             {
-                x.IconUrl = showUser.Status switch
-                {
-                    UserStatus.Online => $"https://cdn.discordapp.com/emojis/630527350173466655.png",
-                    UserStatus.DoNotDisturb => "https://cdn.discordapp.com/emojis/630527350286843904.png",
-                    UserStatus.Offline => "https://cdn.discordapp.com/emojis/630527349917745153.png",
-                    UserStatus.Invisible => "https://cdn.discordapp.com/emojis/630527349917745153.png",
-                    UserStatus.Idle => "https://cdn.discordapp.com/emojis/630536692654145556.png",
-                    UserStatus.AFK => "https://cdn.discordapp.com/emojis/630536692654145556.png",
-                    _ => ""
-                };
-
-                if (string.IsNullOrEmpty(x.IconUrl))
-                {
-                    new_user_state = true;
-                }
-
-                x.Name = $"{showUser.Username}";
-            });
-
-            if (showUser.RoleIds.Count > 0)
-            {
-                eb.Color = Context.Guild.GetRole(showUser.RoleIds.First()).Color;
+                eb.Color = Context.Guild.GetRole(user.RoleIds.First()).Color;
 
                 List<IRole> userRoles = new List<IRole>();
 
-                foreach (ulong roleID in showUser.RoleIds)
+                foreach (ulong roleID in user.RoleIds)
                 {
-                    bool skipRole = true;
-
-                    if ((Context.Guild.GetRole(roleID)).IsEveryone) continue;
-
-                    switch (roleID)
-                    {
-                        case 349875313003724800: break;
-                        case 349875385342885889: break;
-                        case 349875417106087936: break;
-
-                        default:
-                            skipRole = false;
-                            break;
-                    }
-
-                    if (skipRole) continue;
+                    if (Context.Guild.GetRole(roleID).IsEveryone)
+                        continue;
 
                     userRoles.Add(Context.Guild.GetRole(roleID));
                 }
 
-                IEnumerable<IRole> sortedRoles = userRoles.OrderByDescending(x => x.Position);
+                IEnumerable<string> sortedRoles = userRoles
+                    .OrderByDescending(x => x.Position)
+                    .Select(x => $"<@&{x.Id}>");
 
                 EmbedFieldBuilder roleField = new EmbedFieldBuilder
                 {
                     Name = string.Format("Role{0}", sortedRoles.Count() > 1 ? $"s [{sortedRoles.Count()}]" : string.Empty)
                 };
 
-                foreach (IRole role in sortedRoles)
-                {
-                    roleField.Value += string.Format("{0}{1}", role.Name, sortedRoles.Last().Id == role.Id ? string.Empty : ", ");
-                }
-
-                eb.Color = sortedRoles.First().Color;
+                roleField.Value = string.Join(", ", sortedRoles);
 
                 eb.AddField(roleField);
             }
 
-            if (showUser.Activity != null)
-            {
-                eb.Description = showUser.Activity.ToString();
-            }
+            eb.Footer = new EmbedFooterBuilder { Text = $"Id: {user.Id}" };
 
-            eb.Fields = new List<EmbedFieldBuilder>
-            {
-                new EmbedFieldBuilder
-                {
-                    Name = "Username",
-                    Value = $"{showUser.Username}#{showUser.Discriminator}",
-                    IsInline = true
-                },
-                new EmbedFieldBuilder
-                {
-                    Name = "Nickname",
-                    Value = showUser.Nickname == null ? "Not Set" : $"{showUser.Nickname}",
-                    IsInline = true
-                },
-                new EmbedFieldBuilder
-                {
-                    Name = "Joined Server At",
-                    Value = showUser.JoinedAt.ToString(),
-                    IsInline = true
-                },
-                new EmbedFieldBuilder
-                {
-                    Name = "Joined Discord At",
-                    Value = showUser.CreatedAt.ToString(),
-                    IsInline = true
-                },
-            };
-
-            eb.Footer = new EmbedFooterBuilder { Text = $"Name:  Id: {showUser.Id}" };
-
-            string msg = "";
-            if (new_user_state)
-            {
-                msg = $"Inform about this. `new UserStatus state needs new icon at {Config.Prefix}user`.";
-            }
-
-            await Context.Channel.SendMessageAsync(msg, embed: eb.Build());
+            await Context.Channel.SendMessageAsync(embed: eb.Build());
         }
 
         private void ReflectServerResponse(EmbedFieldBuilder efb, StatusCode state) =>
@@ -301,7 +274,7 @@ namespace MrConnect.Server.Discord
                             lastModule = module;
                             stepWasValid = true;
                             //if there are still more steps to validate.
-                            if(i + 1 < steps.Length)
+                            if (i + 1 < steps.Length)
                             {
                                 if (lastModule.Submodules.Count > 0)
                                 {
@@ -334,7 +307,7 @@ namespace MrConnect.Server.Discord
             [Command("inspect")]
             public async Task InspectModuleAsync()
             {
-                if(!Discord.GroupToggledUsers.ContainsKey(Context.User.Id))
+                if (!Discord.GroupToggledUsers.ContainsKey(Context.User.Id))
                 {
                     await ReplyAsync(
                         $"You need to use group pathing for this command.\n" +

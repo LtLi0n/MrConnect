@@ -5,7 +5,7 @@
 [submodule "Deps/Discord.Net"]
 	path = Deps/Discord.Net
 	url = https://github.com/LtLi0n/Discord.Net
-	branch = outer-groups
+	branch = best-branch
 [submodule "Deps/Emojis"]
 	path = Deps/Emojis
 	url = https://github.com/LtLi0n/Emojis
