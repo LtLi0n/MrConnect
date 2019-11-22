@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace MrConnect.Shared.Commands
+namespace MrConnect.Shared
 {
     public class InteractiveCommandBuilder<T> where T : InteractiveCommandContext
     {
