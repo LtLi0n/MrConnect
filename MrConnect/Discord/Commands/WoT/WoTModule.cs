@@ -6,23 +6,36 @@ using WoT.Shared;
 using LionLibrary.Network;
 using System.Text.RegularExpressions;
 
+using static DataServerHelpers.SharedRef;
+using System.Collections.Generic;
+
 namespace MrConnect.Server.Discord
 {
     [Group("wot"), RequireOwner]
     public class WoTModule : ModuleBase<SocketCommandContext>
     {
-        public AppConfig Config { get; set; }
-        public WoTConnector WoT { get; set; }
+        public AppConfig Config { get; }
+        public WoTConnector WoT { get; }
 
-        public UserApi UserApi => WoT.GetController<UserApi>();
-        public CharacterApi CharacterApi => WoT.GetController<CharacterApi>();
-        public CharacterWorkApi CharacterWorkApi => WoT.GetController<CharacterWorkApi>();
+        public UserApi UserApi { get; }
+        public CharacterApi CharacterApi { get; }
+        public CharacterWorkApi CharacterWorkApi { get; }
+
+        public WoTModule(AppConfig config, WoTConnector wotConc)
+        {
+            Config = config;
+            WoT = wotConc;
+
+            UserApi = WoT.GetController<UserApi>();
+            CharacterApi = WoT.GetController<CharacterApi>();
+            CharacterWorkApi = WoT.GetController<CharacterWorkApi>();
+        }
 
         [Command("work"), Alias("w")]
         public async Task HandleWorkCommandAsync()
         {
             CharacterWork worker = await CharacterWorkApi.GetByDiscordIdAsync(Context.User.Id);
-            if(worker != null)
+            if (worker != null)
             {
                 EmbedBuilder eb = new EmbedBuilder();
                 eb.Color = new Color(255, 255, 0);
@@ -40,26 +53,50 @@ namespace MrConnect.Server.Discord
         }
 
         [Command("register")]
-        public async Task RegisterAsync()
+        public async Task RegisterAsync([Remainder] string characterName)
         {
-            User user = await WoT.Users.GetByDiscordIdAsync(Context.User.Id);
-
-            if(user != null)
+            Character? character = await CharacterApi.GetByDiscordIdAsync(Context.User.Id);
+            if(character != null)
             {
                 await ReplyAsync("You are already registered.");
+                return;
             }
-            else
+
+            User? user = await UserApi.GetByDiscordIdAsync(Context.User.Id);
+            uint wotUserId = user != null ? user.Id : 0;
+
+            if (user == null)
             {
-                Packet response = await UserApi.CRUD.AddAsync(new User() { DiscordId = Context.User.Id });
-                await ReplyAsync(response.Content);
+                Packet userCreateResponse = await UserApi.CRUD.AddAsync(
+                    new User
+                    {
+                        DiscordId = Context.User.Id
+                    });
+
+                if (userCreateResponse.Status != StatusCode.Success)
+                {
+                    _ = ReplyAsync(userCreateResponse.Content);
+                    return;
+                }
+                wotUserId = uint.Parse(userCreateResponse[Id]);
             }
+
+            Packet charCreateResponse = await CharacterApi.CRUD.AddAsync(
+                new Character
+                {
+                    UserId = wotUserId,
+                    Name = characterName
+                });
+
+            await ReplyAsync(charCreateResponse.Content);
         }
 
         [Command("delete")]
         public async Task DeleteAsync()
         {
-            Packet response = await WoT.Users.RemoveByDiscordIdAsync(Context.User.Id);
-            if(response == null)
+            Packet response = await UserApi.RemoveByDiscordIdAsync(Context.User.Id);
+
+            if (response == null)
             {
                 await ReplyAsync("You are not registered.");
             }

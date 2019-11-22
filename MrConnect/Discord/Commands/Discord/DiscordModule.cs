@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using Discord.Rest;
 using System.Threading.Tasks;
 using LionLibrary.Network;
 using System.Text.RegularExpressions;
@@ -6,24 +7,28 @@ using Newtonsoft.Json.Linq;
 using Discord.Shared;
 
 using UserApi = Discord.Shared.UserApi;
+using Discord;
 
 namespace MrConnect.Server.Discord
 {
     [Group("discord")]
     public class DiscordModule : ModuleBase<SocketCommandContext>
     {
-        public DiscordConnector Discord { get; set; }
+        public DiscordConnector Discord { get; }
+
+        public DiscordModule(DiscordConnector discordConn)
+        {
+            Discord = discordConn;
+        }
 
         [Command("add_user")]
         [RequireOwner]
-        public async Task AddUser(ulong id)
+        public async Task AddUserAsync(IUser user)
         {
-            var user = await Context.Client.Rest.GetUserAsync(id);
-            
             var reply = await Discord.GetController<UserApi>().CRUD.AddAsync(
-                new global::Discord.Shared.User
+                new User
                 {
-                    Id = id,
+                    Id = user.Id,
                     Username = user.Username,
                     Discriminator = user.Discriminator
                 });
@@ -31,7 +36,7 @@ namespace MrConnect.Server.Discord
             await ReplyAsync(reply.Content);
         }
 
-        [Command(RunMode = RunMode.Async)]
+        [Command("cmd", RunMode = RunMode.Async)]
         [RequireOwner]
         public async Task CmdAsync([Remainder]string query)
         {

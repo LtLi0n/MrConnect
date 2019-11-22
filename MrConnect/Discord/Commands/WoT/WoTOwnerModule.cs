@@ -12,12 +12,22 @@ namespace MrConnect.Discord.Commands
     [Group("owner", ParentModule = typeof(WoTModule)), RequireOwner]
     public class WoTOwnerModule : ModuleBase<SocketCommandContext>
     {
-        public AppConfig Config { get; set; }
-        public WoTConnector WoT { get; set; }
+        public AppConfig Config { get; }
+        public WoTConnector WoT { get; }
 
-        public UserApi UserApi => WoT.GetController<UserApi>();
-        public CharacterApi CharacterApi => WoT.GetController<CharacterApi>();
-        public CharacterWorkApi CharacterWorkApi => WoT.GetController<CharacterWorkApi>();
+        public UserApi UserApi { get; }
+        public CharacterApi CharacterApi { get; }
+        public CharacterWorkApi CharacterWorkApi { get; }
+
+        public WoTOwnerModule(AppConfig appConfig, WoTConnector wotConn)
+        {
+            Config = appConfig;
+            WoT = wotConn;
+
+            UserApi = wotConn.GetController<UserApi>();
+            CharacterApi = wotConn.GetController<CharacterApi>();
+            CharacterWorkApi = wotConn.GetController<CharacterWorkApi>();
+        }
 
         [Command(RunMode = RunMode.Async)]
         public async Task CmdAsync([Remainder]string query)
