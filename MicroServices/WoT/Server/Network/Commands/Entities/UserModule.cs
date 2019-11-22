@@ -15,7 +15,11 @@ namespace WoT.Server.Network.Commands.Entities
     {
         public void ApplyInput(User entity, bool assign_mandatory = true)
         {
-            TryFill<ulong>(DiscordId, x => entity.DiscordId = x);
+            if(assign_mandatory)
+            {
+                TryFill<ulong>(DiscordId, x => entity.DiscordId = x);
+            }
+
             TryFill<bool>(IsPremium, x => entity.IsPremium = x);
             TryFill<ulong>(Settings, x => entity.Settings = (UserSettings)x);
         }
@@ -23,21 +27,24 @@ namespace WoT.Server.Network.Commands.Entities
         [Command("add")]
         [MandatoryArguments(DiscordId)]
         [OptionalArguments(IsPremium, Settings)]
-        public async Task AddAsync() => 
-            await WrapperAddEntityAsync<User, uint>(
-            () => new User { DiscordId = GetArgUInt64(DiscordId) });
+        public Task AddAsync() => 
+            WrapperAddEntityAsync<User, uint>(() => 
+            new User 
+            { 
+                DiscordId = GetArgUInt64(DiscordId) 
+            });
 
         [Command("get")]
         [OptionalArguments(Id)]
-        public async Task GetAsync() => await WrapperGetEntitiesAsync<User>();
+        public Task GetAsync() => WrapperGetEntitiesAsync<User>();
 
         [Command("modify")]
         [MandatoryArguments(Id)]
         [OptionalArguments(IsPremium, Settings)]
-        public async Task ModifyAsync() => await WrapperModifyEntityAsync<User, uint>();
+        public Task ModifyAsync() => WrapperModifyEntityAsync<User, uint>();
 
         [Command("remove")]
         [MandatoryArguments(Id)]
-        public async Task RemoveAsync() => await WrapperRemoveEntityAsync<User, uint>();
+        public Task RemoveAsync() => WrapperRemoveEntityAsync<User, uint>();
     }
 }
