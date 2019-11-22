@@ -7,8 +7,6 @@ namespace WoT.Shared
 {
     public class WoTConnector : ServerConnector
     {
-        public UserApi Users => base.GetController<UserApi>();
-
         public WoTConnector(
             IServiceProvider services,
             WoTServiceConnectionConfig config,
